@@ -13,6 +13,13 @@ func _physics_process(delta):
 		return
 		
 	flight_state = simulated_flight.step(flight_state, disc_data, delta)
+	print(
+	"Speed: ",
+	flight_state.velocity.length(),
+	" m/s | Spin: ",
+	flight_state.spin_rate,
+    " rad/s"
+)
 	global_transform.basis = flight_state.orientation
 	position += flight_state.velocity * delta
 	

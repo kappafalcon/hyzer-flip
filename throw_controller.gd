@@ -39,7 +39,7 @@ func change_release_angle(amount: float):
 func throw_disc():
 	# Need to update how much "power" the throw is given with user input e.g. holding left click
 	var initial_velocity = Vector3(0, 0, -20)
-	var initial_spin_rate = 0.0
+	var initial_spin_rate = 60.0
 	
 	disc.launch(
 		release_point.global_position,
