@@ -3,22 +3,30 @@
 [ext_resource type="Script" uid="uid://d2fn2x855we2c" path="res://disc.gd" id="1_frcqw"]
 [ext_resource type="Script" uid="uid://dmdu4yag8gq2f" path="res://throw_controller.gd" id="2_xnmnc"]
 
-[sub_resource type="CylinderMesh" id="CylinderMesh_xnmnc"]
+[sub_resource type="CylinderMesh" id="CylinderMesh_qgv7u"]
+top_radius = 0.135
+bottom_radius = 0.135
+height = 0.015
 
 [node name="FlightTest" type="Node3D" unique_id=1495945713]
+
+[node name="PlayerOrigin" type="Marker3D" parent="." unique_id=1097678273]
+
+[node name="ReleasePoint" type="Marker3D" parent="PlayerOrigin" unique_id=2103362611]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.45, 1.3, -0.5)
+
+[node name="Camera3D" type="Camera3D" parent="PlayerOrigin" unique_id=564613228]
+transform = Transform3D(1, 0, 0, 0, 0.9999756, -0.00698126, 0, 0.00698126, 0.9999756, 0.614, 2.390851, 1.4201658)
+
+[node name="ThrowController" type="Node" parent="." unique_id=49175949]
+script = ExtResource("2_xnmnc")
 
 [node name="Disc" type="Node3D" parent="." unique_id=1760023243]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.059054643, 0.0888321, -0.023037046)
 script = ExtResource("1_frcqw")
 
 [node name="Mesh" type="MeshInstance3D" parent="Disc" unique_id=854719023]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.135, 0.135, 0.015)
-mesh = SubResource("CylinderMesh_xnmnc")
-
-[node name="Camera3D" type="Camera3D" parent="." unique_id=1005690838]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2, 4)
+transform = Transform3D(3, 0, 0, 0, 3, 0, 0, 0, 3, 0, 0, 0)
+mesh = SubResource("CylinderMesh_qgv7u")
 
 [node name="DirectionalLight3D" type="DirectionalLight3D" parent="." unique_id=108891944]
-
-[node name="ThrowController" type="Node" parent="." unique_id=49175949]
-script = ExtResource("2_xnmnc")
