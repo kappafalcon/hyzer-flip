@@ -1,24 +1,30 @@
 extends Node3D
 
-#const GRAVITY: float = 9.81
+@export var disc_data: DiscData
 
-var velocity: Vector3 = Vector3.ZERO
+var flight_state: FlightState
 var is_flying: bool = false
-var simulator = FlightSimulator.new()
+var simulated_flight = FlightSimulator.new()
 
+
+# This function constantly updates the position of the disc after launch
 func _physics_process(delta):
 	if not is_flying:
 		return
 		
-	velocity = simulator.step_velocity(velocity, delta)
-	position += velocity * delta
+	flight_state = simulated_flight.step(flight_state, disc_data, delta)
+	global_transform.basis = flight_state.orientation
+	position += flight_state.velocity * delta
 	
+
+# This function uses the arguments passed to update the flight characteristics of the now flying disc
 func launch(
 	initial_position: Vector3,
 	initial_velocity: Vector3,
+	initial_spin_rate: float,
 	release_angle: float
 ):
 	global_position = initial_position
-	velocity = initial_velocity
 	rotation_degrees.z = release_angle
+	flight_state = FlightState.new(initial_velocity, initial_spin_rate, global_transform.basis)
 	is_flying = true

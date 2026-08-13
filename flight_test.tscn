@@ -2,10 +2,15 @@
 
 [ext_resource type="Script" uid="uid://d2fn2x855we2c" path="res://disc.gd" id="1_frcqw"]
 [ext_resource type="Script" uid="uid://dmdu4yag8gq2f" path="res://throw_controller.gd" id="2_xnmnc"]
+[ext_resource type="Script" uid="uid://baoyawc264w27" path="res://disc_data.gd" id="3_cgkto"]
+
+[sub_resource type="Resource" id="Resource_f0enk"]
+script = ExtResource("3_cgkto")
+metadata/_custom_type_script = "uid://baoyawc264w27"
 
 [sub_resource type="CylinderMesh" id="CylinderMesh_qgv7u"]
-top_radius = 0.135
-bottom_radius = 0.135
+top_radius = 0.105
+bottom_radius = 0.105
 height = 0.015
 
 [node name="FlightTest" type="Node3D" unique_id=1495945713]
@@ -24,6 +29,7 @@ script = ExtResource("2_xnmnc")
 [node name="Disc" type="Node3D" parent="." unique_id=1760023243]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.059054643, 0.0888321, -0.023037046)
 script = ExtResource("1_frcqw")
+disc_data = SubResource("Resource_f0enk")
 
 [node name="Mesh" type="MeshInstance3D" parent="Disc" unique_id=854719023]
 transform = Transform3D(3, 0, 0, 0, 3, 0, 0, 0, 3, 0, 0, 0)
