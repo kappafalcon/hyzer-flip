@@ -9,3 +9,8 @@ extends Resource
 # 0.0 = neutral
 # Higher values = more understable
 @export var high_speed_turn: float = 0.0
+
+
+func get_area() -> float:
+	var radius = diameter / 2.0
+	return PI * radius * radius
