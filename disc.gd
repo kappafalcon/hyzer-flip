@@ -13,13 +13,7 @@ func _physics_process(delta):
 		return
 		
 	flight_state = simulated_flight.step(flight_state, disc_data, delta)
-	print(
-	"Speed: ",
-	flight_state.velocity.length(),
-	" m/s | Spin: ",
-	flight_state.spin_rate,
-    " rad/s"
-)
+
 	global_transform.basis = flight_state.orientation
 	position += flight_state.velocity * delta
 	
@@ -27,11 +21,27 @@ func _physics_process(delta):
 # This function uses the arguments passed to update the flight characteristics of the now flying disc
 func launch(
 	initial_position: Vector3,
-	initial_velocity: Vector3,
-	initial_spin_rate: float,
-	release_angle: float
+	throw: ThrowParameters
 ):
 	global_position = initial_position
-	rotation_degrees.z = release_angle
-	flight_state = FlightState.new(initial_velocity, initial_spin_rate, global_transform.basis)
+	rotation_degrees.z = throw.release_angle
+	
+	var initial_velocity = Vector3(
+		0,
+		0,
+		-throw.speed
+	)
+	
+	flight_state = FlightState.new(initial_velocity,
+	throw.spin_rate,
+	global_transform.basis
+	)
+	
 	is_flying = true
+
+func reset(reset_position: Vector3) -> void:
+	is_flying = false
+	flight_state = null
+
+	global_position = reset_position
+	rotation = Vector3.ZERO

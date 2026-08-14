@@ -1,0 +1,22 @@
+[gd_scene format=3 uid="uid://bvig4iq42rl37"]
+
+[ext_resource type="Script" uid="uid://d2fn2x855we2c" path="res://disc.gd" id="1_wy34o"]
+[ext_resource type="Script" uid="uid://baoyawc264w27" path="res://disc_data.gd" id="2_y4gon"]
+
+[sub_resource type="Resource" id="Resource_f0enk"]
+script = ExtResource("2_y4gon")
+high_speed_turn = 1.0
+metadata/_custom_type_script = "uid://baoyawc264w27"
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_qgv7u"]
+top_radius = 0.105
+bottom_radius = 0.105
+height = 0.015
+
+[node name="Disc" type="Node3D" unique_id=336648764]
+script = ExtResource("1_wy34o")
+disc_data = SubResource("Resource_f0enk")
+
+[node name="Mesh" type="MeshInstance3D" parent="." unique_id=1588734204]
+transform = Transform3D(3, 0, 0, 0, 3, 0, 0, 0, 3, 0, 0, 0)
+mesh = SubResource("CylinderMesh_qgv7u")

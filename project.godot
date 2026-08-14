@@ -11,7 +11,7 @@ config_version=5
 [application]
 
 config/name="Hyzer Flip"
-run/main_scene="uid://dsprpmiadjwr4"
+run/main_scene="uid://bdngooquan4ok"
 config/features=PackedStringArray("4.7", "Forward Plus")
 config/icon="res://icon.svg"
 
