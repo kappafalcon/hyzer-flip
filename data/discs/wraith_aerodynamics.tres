@@ -1,0 +1,11 @@
+[gd_resource type="Resource" script_class="AerodynamicData" format=3 uid="uid://bnk01dchxd3c6"]
+
+[ext_resource type="Script" uid="uid://byeuavbi4cf0s" path="res://scripts/disc/aerodynamic_data.gd" id="1_xkf4p"]
+
+[resource]
+script = ExtResource("1_xkf4p")
+angles_degrees = Array[float]([-4.0, 0.0, 4.0])
+lift_coefficients = Array[float]([-0.04, 0.109, 0.276])
+drag_coefficients = Array[float]([0.043, 0.042, 0.066])
+moment_coefficients = Array[float]([-0.045, -0.017, 0.001])
+metadata/_custom_type_script = "uid://byeuavbi4cf0s"

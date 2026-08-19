@@ -1,7 +1,7 @@
 [gd_scene format=3 uid="uid://dsprpmiadjwr4"]
 
-[ext_resource type="PackedScene" uid="uid://bvig4iq42rl37" path="res://disc.tscn" id="2_cgkto"]
-[ext_resource type="Script" uid="uid://dmdu4yag8gq2f" path="res://throw_controller.gd" id="2_xnmnc"]
+[ext_resource type="PackedScene" uid="uid://bvig4iq42rl37" path="res://scenes/disc/disc.tscn" id="2_cgkto"]
+[ext_resource type="Script" uid="uid://dmdu4yag8gq2f" path="res://scripts/throw/throw_controller.gd" id="2_xnmnc"]
 
 [node name="FlightTest" type="Node3D" unique_id=1495945713]
 

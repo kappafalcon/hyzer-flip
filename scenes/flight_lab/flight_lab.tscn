@@ -1,7 +1,7 @@
 [gd_scene format=3 uid="uid://bdngooquan4ok"]
 
-[ext_resource type="Script" uid="uid://bfpuhaysbq5oh" path="res://flight_lab.gd" id="1_55n6i"]
-[ext_resource type="PackedScene" uid="uid://bvig4iq42rl37" path="res://disc.tscn" id="2_72a37"]
+[ext_resource type="Script" uid="uid://bfpuhaysbq5oh" path="res://scripts/ui/flight_lab.gd" id="1_55n6i"]
+[ext_resource type="PackedScene" uid="uid://bvig4iq42rl37" path="res://scenes/disc/disc.tscn" id="2_72a37"]
 
 [node name="FlightLab" type="Node3D" unique_id=693876461]
 script = ExtResource("1_55n6i")
@@ -29,23 +29,22 @@ text = "Flight Lab"
 
 [node name="SpeedLabel" type="Label" parent="UI/Panel/Controls" unique_id=1458885623]
 layout_mode = 2
-text = "\"Throw Speed (m/s)\""
+text = "\"Throw Speed (MPH)\""
 
 [node name="SpeedInput" type="SpinBox" parent="UI/Panel/Controls" unique_id=964318651]
 layout_mode = 2
-min_value = 1.0
-max_value = 40.0
-step = 0.5
-value = 25.0
+min_value = 10.0
+value = 60.0
 
 [node name="SpinLabel" type="Label" parent="UI/Panel/Controls" unique_id=175296555]
 layout_mode = 2
-text = "\"Spin Rate (rad/s)\""
+text = "\"Spin Rate (RPM)\""
 
 [node name="SpinInput" type="SpinBox" parent="UI/Panel/Controls" unique_id=1001330234]
 layout_mode = 2
-max_value = 150.0
-value = 60.0
+max_value = 2000.0
+step = 10.0
+value = 900.0
 
 [node name="ReleaseAngleLabel" type="Label" parent="UI/Panel/Controls" unique_id=968444642]
 layout_mode = 2
@@ -55,7 +54,6 @@ text = "\"Release Angle (°)\""
 layout_mode = 2
 min_value = -45.0
 max_value = 45.0
-value = 20.0
 
 [node name="LaunchAngleLabel" type="Label" parent="UI/Panel/Controls" unique_id=794289028]
 layout_mode = 2
@@ -73,6 +71,15 @@ text = "\"Throw\""
 [node name="ResetButton" type="Button" parent="UI/Panel/Controls" unique_id=1593038715]
 layout_mode = 2
 text = "\"Reset\""
+
+[node name="NoseAngleLabel" type="Label" parent="UI/Panel/Controls" unique_id=1070085153]
+layout_mode = 2
+text = "\"Nose Angle (°)\""
+
+[node name="NoseAngleInput" type="SpinBox" parent="UI/Panel/Controls" unique_id=1795177182]
+layout_mode = 2
+min_value = -20.0
+max_value = 20.0
 
 [connection signal="pressed" from="UI/Panel/Controls/ThrowButton" to="." method="_on_throw_button_pressed"]
 [connection signal="pressed" from="UI/Panel/Controls/ResetButton" to="." method="_on_reset_button_pressed"]

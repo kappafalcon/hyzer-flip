@@ -12,8 +12,8 @@ const ANGLE_STEP: float = 10.0
 # Initializes disc location on scene load
 func _ready():
 	disc.global_position = release_point.global_position
-	
-	
+
+
 # Input scanner/controller
 func _process(_delta):
 	if Input.is_action_just_pressed("release_hyzer"):
@@ -21,31 +21,19 @@ func _process(_delta):
 
 	if Input.is_action_just_pressed("release_anhyzer"):
 		change_release_angle(-ANGLE_STEP)
-		
+
 	if Input.is_action_just_pressed("throw_disc"):
 		throw_disc()
 
 
 func change_release_angle(amount: float):
-	release_angle = clamp(
-		release_angle + amount,
-		MIN_RELEASE_ANGLE,
-		MAX_RELEASE_ANGLE
-	)
-	
+	release_angle = clamp(release_angle + amount, MIN_RELEASE_ANGLE, MAX_RELEASE_ANGLE)
+
 	print("Release angle: ", release_angle)
-	
-	
+
+
 func throw_disc():
 	# Need to update how much "power" the throw is given with user input e.g. holding left click
-	var throw = ThrowParameters.new(
-		25.0, # speed
-		60.0, # spin rate
-		release_angle,
-		0.0   # launch angle
-	)
+	var throw = ThrowParameters.new(25.0, 60.0, release_angle, 0.0)  # speed  # spin rate  # launch angle
 
-	disc.launch(
-		release_point.global_position,
-		throw
-	)
+	disc.launch(release_point.global_position, throw)
