@@ -32,10 +32,13 @@ func launch(
 		throw.release_angle
 	)
 
+	
+	var launch_angle_rad = deg_to_rad(throw.launch_angle)
+
 	var initial_velocity = Vector3(
 		0.0,
-		0.0,
-		-throw.speed
+		sin(launch_angle_rad) * throw.speed,
+		-cos(launch_angle_rad) * throw.speed
 	)
 
 	flight_state = FlightState.new(

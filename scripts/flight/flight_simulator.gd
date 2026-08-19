@@ -18,6 +18,7 @@ const MIN_FLIGHT_SPEED: float = 0.001
 const MIN_SPIN_RATE: float = 0.001
 const MIN_INERTIA_DIFFERENCE: float = 0.000000001
 
+
 func step(flight_state: FlightState, disc_data: DiscData, delta: float) -> FlightState:
 	var speed = flight_state.velocity.length()
 
@@ -105,8 +106,7 @@ func calculate_lift_force(
 
 	lift_direction = lift_direction.normalized()
 
-	return lift_direction * lift_force	
-	
+	return lift_direction * lift_force
 	
 	
 func calculate_drag_force(
@@ -246,7 +246,7 @@ func apply_roll(
 	if roll_axis == Vector3.ZERO:
 		return
 
-	var roll_angle = roll_rate * delta
+	var roll_angle = -roll_rate * delta
 	var roll_rotation = Basis(roll_axis, roll_angle)
 
 	flight_state.orientation = (

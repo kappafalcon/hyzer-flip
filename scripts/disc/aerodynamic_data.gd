@@ -6,12 +6,17 @@ extends Resource
 @export var drag_coefficients: Array[float] = []
 @export var moment_coefficients: Array[float] = []
 	
-
 func interpolate_coefficient(
 	angle_of_attack: float,
 	coefficients: Array[float]
 ) -> float:
 	var angle_degrees = rad_to_deg(angle_of_attack)
+
+	if angle_degrees <= angles_degrees[0]:
+		return coefficients[0]
+
+	if angle_degrees >= angles_degrees[-1]:
+		return coefficients[-1]
 
 	for i in range(angles_degrees.size() - 1):
 		var lower_angle = angles_degrees[i]
@@ -30,8 +35,8 @@ func interpolate_coefficient(
 				interpolation_weight
 			)
 
-	return 0.0	
-	
+	return 0.0
+
 func get_lift_coefficient(angle_of_attack: float) -> float:
 	return interpolate_coefficient(
 		angle_of_attack,
