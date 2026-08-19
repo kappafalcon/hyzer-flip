@@ -1,6 +1,6 @@
 [gd_resource type="Resource" script_class="AerodynamicData" format=3 uid="uid://db2wpy8e3ghbt"]
 
-[ext_resource type="Script" uid="uid://byeuavbi4cf0s" path="res://scripts/disc/aerodynamic_data.gd" id="1_2d255"]
+[ext_resource type="Script" path="res://scripts/disc/aerodynamic_data.gd" id="1_2d255"]
 
 [resource]
 script = ExtResource("1_2d255")
