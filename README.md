@@ -23,7 +23,6 @@ hyzer-flip/
 │   ├── throw/
 │   └── ui/
 │
-├── icon.svg
 └── project.godot
 ```
 
