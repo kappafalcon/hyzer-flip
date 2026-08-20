@@ -1,2 +1,0 @@
-DiscData
-AerodynamicData
