@@ -1,0 +1,42 @@
+[gd_scene format=3 uid="uid://cqg2houx8ebvp"]
+
+[ext_resource type="Script" uid="uid://b03olq6f2ke3h" path="res://scripts/player/player.gd" id="1_8afob"]
+[ext_resource type="PackedScene" uid="uid://bvig4iq42rl37" path="res://scenes/disc/disc.tscn" id="2_dovo2"]
+
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_lhi6h"]
+radius = 0.4
+height = 1.8
+
+[sub_resource type="CapsuleMesh" id="CapsuleMesh_wt5dk"]
+
+[node name="Player" type="CharacterBody3D" unique_id=530824088]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
+script = ExtResource("1_8afob")
+disc_scene = ExtResource("2_dovo2")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="." unique_id=2020531595]
+shape = SubResource("CapsuleShape3D_lhi6h")
+
+[node name="Visuals" type="Node3D" parent="." unique_id=121543255]
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Visuals" unique_id=933821786]
+mesh = SubResource("CapsuleMesh_wt5dk")
+
+[node name="ThrowOrigin" type="Marker3D" parent="." unique_id=1858319763]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.5, 1.4, -0.5)
+
+[node name="Cameras" type="Node3D" parent="." unique_id=2013291737]
+
+[node name="ThirdPersonPivot" type="Node3D" parent="Cameras" unique_id=1348073974]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.6, 0)
+
+[node name="SpringArm3D" type="SpringArm3D" parent="Cameras/ThirdPersonPivot" unique_id=1729745205]
+spring_length = 4.0
+
+[node name="ThirdPersonCamera" type="Camera3D" parent="Cameras/ThirdPersonPivot/SpringArm3D" unique_id=1398520366]
+current = true
+
+[node name="FirstPersonPivot" type="Node3D" parent="Cameras" unique_id=1408373176]
+
+[node name="FirstPersonCamera" type="Camera3D" parent="Cameras/FirstPersonPivot" unique_id=55971379]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.5, 0)
