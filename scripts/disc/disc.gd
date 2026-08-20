@@ -20,10 +20,10 @@ func _physics_process(delta):
 
 # This function uses the arguments passed to update the flight characteristics of the now flying disc
 func launch(
-	initial_position: Vector3,
+	initial_transform: Transform3D,
 	throw: ThrowParameters
 ) -> void:
-	global_position = initial_position
+	global_transform = initial_transform
 
 	# Set release orientation.
 	rotation_degrees = Vector3(
@@ -32,14 +32,15 @@ func launch(
 		throw.release_angle
 	)
 
-	
-	var launch_angle_rad = deg_to_rad(throw.launch_angle)
+	var launch_angle_rad := deg_to_rad(throw.launch_angle)
 
-	var initial_velocity = Vector3(
+	var local_velocity := Vector3(
 		0.0,
 		sin(launch_angle_rad) * throw.speed,
-		-cos(launch_angle_rad) * throw.speed
+		-cos(launch_angle_rad) * throw.speed,
 	)
+
+	var initial_velocity : Vector3 = initial_transform.basis * local_velocity
 
 	flight_state = FlightState.new(
 		initial_velocity,
