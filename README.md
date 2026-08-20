@@ -52,8 +52,7 @@ scenes/
 │   └── disc.tscn
 │
 └── flight_lab/
-    ├── flight_lab.tscn
-    └── flight_test.tscn
+    └── flight_lab.tscn
 ```
 
 #### `disc/`
@@ -84,7 +83,6 @@ scripts/
 │   └── flight_state.gd
 │
 ├── throw/
-│   ├── throw_controller.gd
 │   └── throw_parameters.gd
 │
 └── ui/
@@ -115,9 +113,10 @@ Keeping the simulator separate from the disc object makes the flight model easie
 Handles the transition between player input and the beginning of a simulated flight.
 
 * **`throw_parameters.gd`** — describes the initial conditions of a throw, such as release speed, spin, and release angles.
-* **`throw_controller.gd`** — converts those throw parameters into an initialized disc flight.
 
-This separates **how a disc is thrown** from **what happens to it after release**.
+This separates **how a disc is thrown** from **what happens to it after release**. A
+future gameplay controller will own input collection; it should not be part of the
+flight simulation itself.
 
 #### `ui/`
 
@@ -131,6 +130,14 @@ Contains scripts associated with development and gameplay interfaces.
 
 Contains development notes and supporting project documentation.
 
+```text
+docs/
+├── architecture.md
+├── arena-shooter.md
+├── disc-molds.md
+└── flight-model.md
+```
+
 ---
 
 ## Architecture
@@ -139,9 +146,6 @@ The disc flight pipeline is intentionally separated into a few distinct concepts
 
 ```text
 Throw Parameters
-       │
-       ▼
-Throw Controller
        │
        ▼
 Initial Flight State
