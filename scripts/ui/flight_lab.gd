@@ -2,25 +2,24 @@ extends Node3D
 
 @onready var disc = $Disc
 @onready var release_point = $ReleasePoint
-
-@export var throw_speed: float = 25.0
-@export var throw_spin: float = 900.0
-@export var throw_release_angle: float = 0.0
-@export var throw_launch_angle: float = 5.0
-@export var throw_nose_angle: float = 0.0
+@onready var speed_input: SpinBox = $UI/Panel/Controls/SpeedInput
+@onready var spin_input: SpinBox = $UI/Panel/Controls/SpinInput
+@onready var release_angle_input: SpinBox = $UI/Panel/Controls/ReleaseAngleInput
+@onready var launch_angle_input: SpinBox = $UI/Panel/Controls/LaunchAngleInput
+@onready var nose_angle_input: SpinBox = $UI/Panel/Controls/NoseAngleInput
 
 func _on_throw_button_pressed() -> void:
 
 	var throw = ThrowParameters.new(
-		throw_speed,
-		throw_spin,
-		throw_release_angle,
-		throw_launch_angle,
-		throw_nose_angle
+		speed_input.value,
+		spin_input.value,
+		release_angle_input.value,
+		launch_angle_input.value,
+		nose_angle_input.value
 	)
 
 	disc.launch(release_point.global_transform, throw)
 
 
 func _on_reset_button_pressed() -> void:
-	disc.reset(release_point.global_transform)
+	disc.reset(release_point.global_position)
