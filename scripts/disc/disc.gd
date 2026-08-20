@@ -6,9 +6,9 @@ var flight_state: FlightState
 var is_flying: bool = false
 var simulated_flight = FlightSimulator.new()
 
-
+var debug_flight_time: float = 0.0
 # This function constantly updates the position of the disc after launch
-func _physics_process(delta):	
+func _physics_process(delta):
 	if not is_flying:
 		return
 
@@ -27,7 +27,7 @@ func launch(
 
 	# Set release orientation.
 	rotation_degrees = Vector3(
-		-throw.nose_angle,
+		throw.launch_angle + throw.nose_angle,
 		0.0,
 		throw.release_angle
 	)
