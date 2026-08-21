@@ -9,6 +9,7 @@ script = ExtResource("1_55n6i")
 [node name="Disc" parent="." unique_id=336648764 instance=ExtResource("2_72a37")]
 
 [node name="ReleasePoint" type="Marker3D" parent="." unique_id=199541069]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.5, 0)
 
 [node name="Camera3D" type="Camera3D" parent="." unique_id=186970196]
 
@@ -44,7 +45,7 @@ text = "\"Spin Rate (RPM)\""
 layout_mode = 2
 max_value = 2000.0
 step = 10.0
-value = 900.0
+value = 1300.0
 
 [node name="ReleaseAngleLabel" type="Label" parent="UI/Panel/Controls" unique_id=968444642]
 layout_mode = 2
@@ -54,6 +55,7 @@ text = "\"Release Angle (°)\""
 layout_mode = 2
 min_value = -45.0
 max_value = 45.0
+value = 8.0
 
 [node name="LaunchAngleLabel" type="Label" parent="UI/Panel/Controls" unique_id=794289028]
 layout_mode = 2
@@ -63,6 +65,7 @@ text = "\"Launch Angle (°)\""
 layout_mode = 2
 min_value = -20.0
 max_value = 45.0
+value = 10.0
 
 [node name="ThrowButton" type="Button" parent="UI/Panel/Controls" unique_id=468543400]
 layout_mode = 2

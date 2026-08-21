@@ -50,9 +50,11 @@ state, but they must not be the source of its rules.
 | --- | --- | --- |
 | Mold mass, diameter, inertia, and coefficient tables | `DiscData` and `AerodynamicData` Resources | Data, not bespoke scripts per disc |
 | Release inputs | `ThrowParameters` now; a gameplay throw command later | Converts player-facing units at the boundary |
-| Aerodynamic integration | `FlightSimulator` | Must become a complete, pure fixed-step simulation state |
-| Scene transform and visuals | `Disc` scene | Temporary prototype owner of position; should become a consumer of `FlightState` |
+| Wind / air environment | `FlightEnvironment` | Pure world-space wind input; labs and future gameplay may supply it, but do not own aerodynamic rules |
+| Aerodynamic integration | `FlightSimulator` | Pure 120 Hz midpoint solver over complete flight state |
+| Scene transform and visuals | `Disc` scene | Projects `FlightState` onto the scene transform; never owns solver position |
 | Lab ground-distance measurement | `scenes/flight_range/` | Observes presentation segments and stops at a horizontal ground-plane crossing; not authoritative collision |
+| Flight Range disc selection | Flight Range UI | Selects an injected immutable `DiscData` resource only while the disc is idle |
 | Input collection | Flight Lab or future player controller | Never belongs in the simulator |
 | Collision queries and response | A dedicated gameplay/physics adapter | Must be deterministic and separate from aerodynamic forces |
 | Network authority | Future server simulation | Clients predict and render; they do not define the result |

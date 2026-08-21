@@ -1,14 +1,15 @@
 [gd_resource type="Resource" script_class="DiscData" format=3]
 
 [ext_resource type="Script" path="res://scripts/disc/disc_data.gd" id="1_disc_data"]
-[ext_resource type="Resource" uid="uid://bnk01dchxd3c6" path="res://data/discs/wraith_aerodynamics.tres" id="2_aerodynamics"]
+[ext_resource type="Resource" path="res://data/discs/prototype_distance_driver_aerodynamics.tres" id="2_aerodynamics"]
 
 [resource]
-resource_name = "Beat-In Destroyer"
+resource_name = "Prototype Distance Driver"
 script = ExtResource("1_disc_data")
 mass = 0.175
 diameter = 0.21
 aerodynamics = ExtResource("2_aerodynamics")
 radial_moment_of_inertia = 0.000482
 spin_moment_of_inertia = 0.000965
+aerodynamic_spin_damping = -1.75e-05
 metadata/_custom_type_script = "uid://baoyawc264w27"

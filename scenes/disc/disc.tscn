@@ -1,7 +1,7 @@
 [gd_scene format=3 uid="uid://bvig4iq42rl37"]
 
 [ext_resource type="Script" uid="uid://cuqu8y33poqi0" path="res://scripts/disc/disc.gd" id="1_wy34o"]
-[ext_resource type="Resource" path="res://data/discs/beat_in_destroyer.tres" id="2_wy34o"]
+[ext_resource type="Resource" path="res://data/discs/prototype_distance_driver.tres" id="2_wy34o"]
 
 [sub_resource type="CylinderMesh" id="CylinderMesh_qgv7u"]
 top_radius = 0.105

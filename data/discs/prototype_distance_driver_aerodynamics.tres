@@ -1,0 +1,15 @@
+[gd_resource type="Resource" script_class="AerodynamicData" format=3 uid="uid://bnk01dchxd3c6"]
+
+[ext_resource type="Script" path="res://scripts/disc/aerodynamic_data.gd" id="1_xkf4p"]
+
+[resource]
+script = ExtResource("1_xkf4p")
+angles_degrees = Array[float]([-20.0, -12.0, -8.0, -4.0, 0.0, 4.0, 8.0, 12.0, 20.0])
+lift_coefficients = Array[float]([-0.4, -0.22, -0.1, -0.02, 0.11, 0.22, 0.35, 0.48, 0.7])
+drag_coefficients = Array[float]([0.11, 0.04, 0.022, 0.012, 0.008, 0.014, 0.025, 0.05, 0.11])
+moment_coefficients = Array[float]([-0.0423, -0.0333, -0.0252, -0.0153, -0.003, -0.016, -0.032, -0.052, -0.09])
+low_speed_moment_coefficients = Array[float]([-0.0423, -0.0333, -0.0252, -0.0153, -0.003, -0.016, -0.032, -0.052, -0.09])
+low_speed_reference = 12.0
+high_speed_reference = 22.0
+source_reference = "Hyzer Flip author-authored gameplay calibration for the stable prototype distance driver. Moment coefficients are calibrated for angular-momentum precession and aerodynamic spin damping. The raised low-to-mid-angle drag curve limits excess glide, while consistently negative high- and low-speed moment curves produce a stable fade response across the 0 to -10 degree release envelope. This is not measured aerodynamic data; replace it with independently collected or separately licensed validation data before release."
+metadata/_custom_type_script = "uid://byeuavbi4cf0s"
