@@ -12,10 +12,11 @@ defines the boundaries that keep those stages independently tunable.
 data/discs/       Disc and aerodynamic Resource data
 scenes/disc/      Reusable disc presentation scene
 scenes/flight_lab/ Controlled flight-test scene
+scenes/flight_range/ Visual ground-range measurement scene
 scripts/disc/     Disc presentation and disc-data types
 scripts/flight/   Flight state and flight simulation
 scripts/throw/    Throw input data
-scripts/ui/       Flight-lab UI behavior
+scripts/ui/       Flight-lab and range UI behavior
 ```
 
 `scenes/` is the canonical location for all `.tscn` files. Root-level duplicate
@@ -51,6 +52,7 @@ state, but they must not be the source of its rules.
 | Release inputs | `ThrowParameters` now; a gameplay throw command later | Converts player-facing units at the boundary |
 | Aerodynamic integration | `FlightSimulator` | Must become a complete, pure fixed-step simulation state |
 | Scene transform and visuals | `Disc` scene | Temporary prototype owner of position; should become a consumer of `FlightState` |
+| Lab ground-distance measurement | `scenes/flight_range/` | Observes presentation segments and stops at a horizontal ground-plane crossing; not authoritative collision |
 | Input collection | Flight Lab or future player controller | Never belongs in the simulator |
 | Collision queries and response | A dedicated gameplay/physics adapter | Must be deterministic and separate from aerodynamic forces |
 | Network authority | Future server simulation | Clients predict and render; they do not define the result |

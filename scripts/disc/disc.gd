@@ -1,5 +1,10 @@
 extends Node3D
 
+signal flight_segment_advanced(
+	previous_position: Vector3,
+	next_position: Vector3,
+)
+
 @export var disc_data: DiscData
 
 var flight_state: FlightState
@@ -12,10 +17,19 @@ func _physics_process(delta):
 	if not is_flying:
 		return
 
+	var previous_global_position := global_position
 	flight_state = simulated_flight.step(flight_state, disc_data, delta)
+	var next_global_position: Vector3 = (
+		previous_global_position
+		+ flight_state.velocity * delta
+	)
 
 	global_transform.basis = flight_state.orientation
-	position += flight_state.velocity * delta
+	global_position = next_global_position
+	flight_segment_advanced.emit(
+		previous_global_position,
+		next_global_position,
+	)
 
 
 # This function uses the arguments passed to update the flight characteristics of the now flying disc
@@ -49,6 +63,12 @@ func launch(
 	)
 
 	is_flying = true
+
+
+func stop_at(landing_position: Vector3) -> void:
+	is_flying = false
+	global_position = landing_position
+
 
 func reset(reset_position: Vector3) -> void:
 	is_flying = false

@@ -1,0 +1,242 @@
+[gd_scene format=3 uid="uid://dp14f1lfvoe62"]
+
+[ext_resource type="Script" uid="uid://bjgus5us5it2y" path="res://scripts/ui/flight_range.gd" id="1_flight_range"]
+[ext_resource type="PackedScene" uid="uid://bvig4iq42rl37" path="res://scenes/disc/disc.tscn" id="2_disc"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_ground"]
+albedo_color = Color(0.11, 0.33, 0.14, 1)
+
+[sub_resource type="PlaneMesh" id="PlaneMesh_ground"]
+material = SubResource("StandardMaterial3D_ground")
+size = Vector2(400, 400)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_marker"]
+albedo_color = Color(0.93, 0.79, 0.24, 1)
+emission_enabled = true
+emission = Color(0.45, 0.32, 0.04, 1)
+
+[sub_resource type="BoxMesh" id="BoxMesh_marker"]
+material = SubResource("StandardMaterial3D_marker")
+size = Vector3(24, 0.03, 0.3)
+
+[node name="FlightRange" type="Node3D" unique_id=1793237804]
+script = ExtResource("1_flight_range")
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="." unique_id=2028524495]
+transform = Transform3D(0.90630776, 0.34618863, -0.24240388, 0, 0.57357645, 0.81915206, 0.42261827, -0.74240386, 0.5198368, 0, 0, 0)
+light_energy = 1.5
+shadow_enabled = true
+
+[node name="GroundVisual" type="MeshInstance3D" parent="." unique_id=661332229]
+mesh = SubResource("PlaneMesh_ground")
+
+[node name="ReleasePoint" type="Marker3D" parent="." unique_id=957716529]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.5, 0)
+
+[node name="Disc" parent="." unique_id=1166705943 instance=ExtResource("2_disc")]
+
+[node name="Marker100ft" type="MeshInstance3D" parent="." unique_id=83248698]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.015, -30.48)
+mesh = SubResource("BoxMesh_marker")
+
+[node name="Label" type="Label3D" parent="Marker100ft" unique_id=252840943]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -14, 0.5, 0)
+pixel_size = 0.008
+billboard = 1
+modulate = Color(1, 0.88, 0.31, 1)
+text = "100 ft"
+font_size = 48
+outline_size = 8
+
+[node name="Marker200ft" type="MeshInstance3D" parent="." unique_id=672321646]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.015, -60.96)
+mesh = SubResource("BoxMesh_marker")
+
+[node name="Label" type="Label3D" parent="Marker200ft" unique_id=272491851]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -14, 0.5, 0)
+pixel_size = 0.008
+billboard = 1
+modulate = Color(1, 0.88, 0.31, 1)
+text = "200 ft"
+font_size = 48
+outline_size = 8
+
+[node name="Marker300ft" type="MeshInstance3D" parent="." unique_id=362689693]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.015, -91.44)
+mesh = SubResource("BoxMesh_marker")
+
+[node name="Label" type="Label3D" parent="Marker300ft" unique_id=698847836]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -14, 0.5, 0)
+pixel_size = 0.008
+billboard = 1
+modulate = Color(1, 0.88, 0.31, 1)
+text = "300 ft"
+font_size = 48
+outline_size = 8
+
+[node name="Marker400ft" type="MeshInstance3D" parent="." unique_id=1920829428]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.015, -121.92)
+mesh = SubResource("BoxMesh_marker")
+
+[node name="Label" type="Label3D" parent="Marker400ft" unique_id=97019727]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -14, 0.5, 0)
+pixel_size = 0.008
+billboard = 1
+modulate = Color(1, 0.88, 0.31, 1)
+text = "400 ft"
+font_size = 48
+outline_size = 8
+
+[node name="Marker500ft" type="MeshInstance3D" parent="." unique_id=871615739]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.015, -152.4)
+mesh = SubResource("BoxMesh_marker")
+
+[node name="Label" type="Label3D" parent="Marker500ft" unique_id=624143230]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -14, 0.5, 0)
+pixel_size = 0.008
+billboard = 1
+modulate = Color(1, 0.88, 0.31, 1)
+text = "500 ft"
+font_size = 48
+outline_size = 8
+
+[node name="OverviewCamera" type="Camera3D" parent="." unique_id=2055655472]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 24, 14, 28)
+current = true
+fov = 80.0
+
+[node name="SideCamera" type="Camera3D" parent="." unique_id=1226354940]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 35, 8, -35)
+
+[node name="ChaseCamera" type="Camera3D" parent="." unique_id=1849581080]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3.5, 10)
+fov = 80.0
+
+[node name="OverheadCamera" type="Camera3D" parent="." unique_id=1826991442]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 55, 10)
+fov = 70.0
+
+[node name="UI" type="CanvasLayer" parent="." unique_id=593083152]
+
+[node name="Panel" type="PanelContainer" parent="UI" unique_id=1397528502]
+offset_left = 16.0
+offset_top = 16.0
+offset_right = 350.0
+offset_bottom = 500.0
+
+[node name="Controls" type="VBoxContainer" parent="UI/Panel" unique_id=1179014651]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="TitleLabel" type="Label" parent="UI/Panel/Controls" unique_id=1636883374]
+layout_mode = 2
+theme_override_font_sizes/font_size = 24
+text = "Flight Range"
+
+[node name="DescriptionLabel" type="Label" parent="UI/Panel/Controls" unique_id=798779315]
+layout_mode = 2
+text = "Prototype flight measurement. The disc stops at its first crossing of the green ground plane."
+autowrap_mode = 2
+
+[node name="SpeedLabel" type="Label" parent="UI/Panel/Controls" unique_id=12052746]
+layout_mode = 2
+text = "Throw speed (mph)"
+
+[node name="SpeedInput" type="SpinBox" parent="UI/Panel/Controls" unique_id=1318215550]
+layout_mode = 2
+min_value = 10.0
+value = 60.0
+
+[node name="SpinLabel" type="Label" parent="UI/Panel/Controls" unique_id=1209310172]
+layout_mode = 2
+text = "Spin rate (rpm)"
+
+[node name="SpinInput" type="SpinBox" parent="UI/Panel/Controls" unique_id=1505010987]
+layout_mode = 2
+max_value = 2000.0
+step = 10.0
+value = 1200.0
+
+[node name="ReleaseAngleLabel" type="Label" parent="UI/Panel/Controls" unique_id=1894432950]
+layout_mode = 2
+text = "Release angle (°)"
+
+[node name="ReleaseAngleInput" type="SpinBox" parent="UI/Panel/Controls" unique_id=1254501580]
+layout_mode = 2
+min_value = -45.0
+max_value = 45.0
+value = 15.0
+
+[node name="LaunchAngleLabel" type="Label" parent="UI/Panel/Controls" unique_id=1173164905]
+layout_mode = 2
+text = "Launch angle (°)"
+
+[node name="LaunchAngleInput" type="SpinBox" parent="UI/Panel/Controls" unique_id=676100330]
+layout_mode = 2
+min_value = -20.0
+max_value = 45.0
+value = 12.0
+
+[node name="NoseAngleLabel" type="Label" parent="UI/Panel/Controls" unique_id=110270038]
+layout_mode = 2
+text = "Nose angle (°)"
+
+[node name="NoseAngleInput" type="SpinBox" parent="UI/Panel/Controls" unique_id=1141433906]
+layout_mode = 2
+min_value = -20.0
+max_value = 20.0
+
+[node name="CameraAngleLabel" type="Label" parent="UI/Panel/Controls" unique_id=567446328]
+layout_mode = 2
+text = "Camera angle"
+
+[node name="CameraAngleSelect" type="OptionButton" parent="UI/Panel/Controls" unique_id=1498530663]
+layout_mode = 2
+selected = 0
+item_count = 4
+popup/item_0/text = "Overview"
+popup/item_0/id = 0
+popup/item_1/text = "Side"
+popup/item_1/id = 1
+popup/item_2/text = "Chase"
+popup/item_2/id = 2
+popup/item_3/text = "Overhead"
+popup/item_3/id = 3
+
+[node name="ThrowButton" type="Button" parent="UI/Panel/Controls" unique_id=1800350113]
+layout_mode = 2
+text = "Throw"
+
+[node name="ResetButton" type="Button" parent="UI/Panel/Controls" unique_id=931868052]
+layout_mode = 2
+text = "Reset"
+
+[node name="MeasurementPanel" type="PanelContainer" parent="UI"]
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -380.0
+offset_top = 16.0
+offset_right = -16.0
+offset_bottom = 104.0
+grow_horizontal = 0
+
+[node name="Readout" type="VBoxContainer" parent="UI/MeasurementPanel"]
+layout_mode = 2
+theme_override_constants/separation = 4
+
+[node name="DistanceValue" type="Label" parent="UI/MeasurementPanel/Readout"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 18
+text = "Ground distance: —"
+horizontal_alignment = 2
+
+[node name="StatusValue" type="Label" parent="UI/MeasurementPanel/Readout"]
+layout_mode = 2
+text = "Ready"
+horizontal_alignment = 2
+
+[connection signal="flight_segment_advanced" from="Disc" to="." method="_on_disc_flight_segment_advanced"]
+[connection signal="item_selected" from="UI/Panel/Controls/CameraAngleSelect" to="." method="_on_camera_angle_select_item_selected"]
+[connection signal="pressed" from="UI/Panel/Controls/ThrowButton" to="." method="_on_throw_button_pressed"]
+[connection signal="pressed" from="UI/Panel/Controls/ResetButton" to="." method="_on_reset_button_pressed"]

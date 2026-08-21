@@ -15,7 +15,8 @@ hyzer-flip/
 │
 ├── scenes/
 │   ├── disc/
-│   └── flight_lab/
+│   ├── flight_lab/
+│   └── flight_range/
 │
 ├── scripts/
 │   ├── disc/
@@ -33,6 +34,7 @@ Contains Godot resources representing game data.
 ```text
 data/
 └── discs/
+    ├── beat_in_destroyer.tres
     ├── test_aerodynamics.tres
     ├── test_disc.tres
     └── wraith_aerodynamics.tres
@@ -51,8 +53,11 @@ scenes/
 ├── disc/
 │   └── disc.tscn
 │
-└── flight_lab/
-    └── flight_lab.tscn
+├── flight_lab/
+│   └── flight_lab.tscn
+│
+└── flight_range/
+    └── flight_range.tscn
 ```
 
 #### `disc/`
@@ -64,6 +69,12 @@ Contains the physical disc scene used during simulation.
 Contains scenes used to test and visualize disc flight.
 
 The Flight Lab provides a controlled environment for experimenting with throw parameters and aerodynamic behavior without requiring the rest of the game.
+
+#### `flight_range/`
+
+Contains a visual flight-range measurement scene. It stops the prototype disc
+at its first ground-plane crossing and displays the horizontal release-to-impact
+distance; it does not model bounce, skip, or roll.
 
 ---
 
@@ -86,7 +97,8 @@ scripts/
 │   └── throw_parameters.gd
 │
 └── ui/
-    └── flight_lab.gd
+    ├── flight_lab.gd
+    └── flight_range.gd
 ```
 
 #### `disc/`
@@ -123,6 +135,7 @@ flight simulation itself.
 Contains scripts associated with development and gameplay interfaces.
 
 * **`flight_lab.gd`** — controls the Flight Lab interface and passes test parameters into the throw/flight systems.
+* **`flight_range.gd`** — controls the visual ground-distance measurement scene.
 
 ---
 

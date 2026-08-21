@@ -39,6 +39,13 @@ the prototype and must be stated explicitly before they are changed.
 `_physics_process`. `FlightState` currently contains velocity, spin rate, and
 orientation; position remains on the `Node3D`.
 
+`scenes/flight_range/flight_range.tscn` is a lab-only visual measurement scene.
+It observes each presentation segment emitted by `Disc`, finds the first swept
+crossing of the horizontal plane at world `y = 0`, stops the presentation at
+that interpolated point, and displays the release-to-impact horizontal distance.
+This is not solver-owned collision state and does not implement bounce, skip,
+roll, or any arena projectile rule.
+
 For each simulation step, `FlightSimulator`:
 
 1. Computes speed and an angle of attack from velocity and the disc normal.
@@ -59,8 +66,9 @@ spin decay.
 - Air velocity is currently the world velocity: there is no wind or sideslip.
 - The integration timestep comes directly from Godot physics processing; a
   fixed simulation tick and convergence tests are not yet implemented.
-- There is no collision, ground interaction, terminal-flight state, or replay
-  serialization.
+- There is no solver-owned collision, ground interaction, terminal-flight
+  state, or replay serialization. The Flight Range's presentational ground
+  measurement is not an authoritative collision implementation.
 - `FlightState` is not yet a complete standalone simulation state because it
   does not carry position or tick/time.
 - Aerodynamic tables have no provenance, validation, or explicit valid-angle
