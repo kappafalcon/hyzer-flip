@@ -18,6 +18,24 @@ remain configurable or be decided explicitly; do not silently invent them.
 
 Discs are physical projectiles, never hitscan attacks.
 
+### Arcade flight policy
+
+Arena throws use deterministic, disc-golf-inspired trajectories rather than
+literal field-distance simulation. Design combat encounters around an effective
+100–200 ft threat space. Longer throws may provide movement pressure, scouting,
+or route control, but must not become reliable moving-target attacks.
+
+Flight identity remains legible across release angles. The utility driver must
+support spike-hyzer, straight-to-fade corner, and controlled flex-to-flat lines.
+The beat-in distance driver must support maximum-power hyzer-flip-to-flat laser,
+flat-release turning-S, and anhyzer-to-roller lines within its configured
+envelope. The natural finish and turn directions mirror for backhand and
+forehand spin direction.
+
+This is authored gameplay calibration, not a hidden correction: flight profile,
+release envelope, projectile collision behavior, and proximity capture are
+separate inspectable configuration concerns.
+
 - A disc type can define a maximum number of bounces before it breaks. The
   bounce limit and break behavior must be per-projectile configuration.
 - A disc type can opt into skipping. Skips and bounces are distinct collision

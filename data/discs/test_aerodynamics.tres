@@ -8,4 +8,7 @@ angles_degrees = Array[float]([-10.0, 0.0, 10.0])
 lift_coefficients = Array[float]([-0.2, 0.1, 0.6])
 drag_coefficients = Array[float]([0.2, 0.1, 0.3])
 moment_coefficients = Array[float]([-0.1, 0.0, 0.1])
+low_speed_moment_coefficients = Array[float]([-0.1, 0.0, 0.1])
+low_speed_reference = 12.0
+high_speed_reference = 22.0
 metadata/_custom_type_script = "uid://byeuavbi4cf0s"
