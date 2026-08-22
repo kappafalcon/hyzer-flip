@@ -2,10 +2,10 @@
 
 ## Project intent
 
-Hyzer Flip begins as a realistic disc-golf flight lab and will evolve into a
-multiplayer arena shooter. Build the project so flight behavior is explainable,
-repeatable, and easy to tune without coupling it to player controls, rendering,
-or networking.
+Hyzer Flip uses a deterministic, disc-golf-inspired arcade flight model and
+will evolve into a multiplayer arena shooter. Build the project so flight
+behavior is explainable, repeatable, and easy to tune without coupling it to
+player controls, rendering, or networking.
 
 ## Working agreements
 
@@ -15,6 +15,9 @@ or networking.
   branches unless the user asks.
 - Prefer small, reviewable changes. Update relevant documentation when a durable
   architecture or workflow decision changes.
+- Keep implementation work narrowly scoped: change at most one or two functions
+  per task and touch no more than one source file, except for directly required
+  assets or generated companion files. Ask before expanding beyond that scope.
 - Treat `scenes/` as the canonical home for Godot scenes. Do not add duplicate
   root-level `.tscn` files.
 - After an intentional tracked project-structure change, keep `README.md`
@@ -36,7 +39,7 @@ or networking.
 
 - Use `$godot-4-workflow` for Godot scenes, GDScript APIs, resources, input
   actions, and project-setting changes when the skill is available.
-- Before changing flight code or disc aerodynamic resources, read
+- Before changing flight code or arcade disc resources, read
   `docs/flight-model.md`.
 - Keep that document current when changing units, coordinate conventions,
   simulation scope, or validation status.

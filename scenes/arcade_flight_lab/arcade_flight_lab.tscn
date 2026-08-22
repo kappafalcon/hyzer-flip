@@ -1,0 +1,154 @@
+[gd_scene format=3 uid="uid://cdk5fk7p38n6u"]
+
+[ext_resource type="Script" uid="uid://dlby7h3edsg3r" path="res://scripts/ui/arcade_flight_lab.gd" id="1_script"]
+[ext_resource type="Resource" uid="uid://b6mrmw7mnul8j" path="res://data/discs/neutral_mid_arcade_draft.tres" id="2_profile"]
+[ext_resource type="Script" uid="uid://df2f7iv1vpij7" path="res://scripts/flight/arcade_flight_profile.gd" id="3_0fi8o"]
+[ext_resource type="Resource" uid="uid://cigws6v1ymdap" path="res://data/discs/utility_driver_arcade_draft.tres" id="3_utility_profile"]
+[ext_resource type="Resource" uid="uid://7hb578bchs4o" path="res://data/discs/beat_in_distance_driver_arcade_draft.tres" id="4_beat_in_profile"]
+[ext_resource type="PackedScene" uid="uid://cqg2houx8ebvp" path="res://scenes/player/player.tscn" id="5_player"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_ground"]
+albedo_color = Color(0.08, 0.22, 0.12, 1)
+
+[sub_resource type="PlaneMesh" id="PlaneMesh_ground"]
+material = SubResource("StandardMaterial3D_ground")
+size = Vector2(160, 160)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_range_marker"]
+albedo_color = Color(0.95, 0.76, 0.16, 1)
+emission_enabled = true
+emission = Color(0.45, 0.28, 0.02, 1)
+
+[sub_resource type="BoxMesh" id="BoxMesh_range_marker"]
+material = SubResource("StandardMaterial3D_range_marker")
+size = Vector3(10, 0.02, 0.14)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_disc"]
+albedo_color = Color(0.16, 0.65, 0.96, 1)
+metallic = 0.2
+roughness = 0.32
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_disc"]
+material = SubResource("StandardMaterial3D_disc")
+top_radius = 0.105
+bottom_radius = 0.105
+height = 0.018
+
+[node name="ArcadeFlightLab" type="Node3D" unique_id=453897288]
+script = ExtResource("1_script")
+flight_profile = ExtResource("2_profile")
+available_flight_profiles = Array[ExtResource("3_0fi8o")]([ExtResource("2_profile"), ExtResource("3_utility_profile"), ExtResource("4_beat_in_profile")])
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="." unique_id=426091502]
+transform = Transform3D(0.8660254, 0.4045085, -0.29389265, 0, 0.5877853, 0.809017, 0.5, -0.70062923, 0.509037, 0, 0, 0)
+light_energy = 1.5
+shadow_enabled = true
+
+[node name="GroundVisual" type="MeshInstance3D" parent="." unique_id=903106259]
+mesh = SubResource("PlaneMesh_ground")
+
+[node name="Marker50ft" type="MeshInstance3D" parent="." unique_id=2145384297]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.02, -15.24)
+mesh = SubResource("BoxMesh_range_marker")
+
+[node name="Label" type="Label3D" parent="Marker50ft" unique_id=1010231357]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5.5, 0.4, 0)
+pixel_size = 0.008
+billboard = 1
+modulate = Color(1, 0.88, 0.31, 1)
+text = "50 ft"
+font_size = 36
+outline_size = 6
+
+[node name="Marker100ft" type="MeshInstance3D" parent="." unique_id=1243788516]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.02, -30.48)
+mesh = SubResource("BoxMesh_range_marker")
+
+[node name="Label" type="Label3D" parent="Marker100ft" unique_id=329194637]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5.5, 0.4, 0)
+pixel_size = 0.008
+billboard = 1
+modulate = Color(1, 0.88, 0.31, 1)
+text = "100 ft"
+font_size = 36
+outline_size = 6
+
+[node name="Marker150ft" type="MeshInstance3D" parent="." unique_id=1429824637]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.02, -45.72)
+mesh = SubResource("BoxMesh_range_marker")
+
+[node name="Label" type="Label3D" parent="Marker150ft" unique_id=343824924]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5.5, 0.4, 0)
+pixel_size = 0.008
+billboard = 1
+modulate = Color(1, 0.88, 0.31, 1)
+text = "150 ft"
+font_size = 36
+outline_size = 6
+
+[node name="Marker200ft" type="MeshInstance3D" parent="." unique_id=32934312]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.02, -60.96)
+mesh = SubResource("BoxMesh_range_marker")
+
+[node name="Label" type="Label3D" parent="Marker200ft" unique_id=278606238]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5.5, 0.4, 0)
+pixel_size = 0.008
+billboard = 1
+modulate = Color(1, 0.88, 0.31, 1)
+text = "200 ft"
+font_size = 36
+outline_size = 6
+
+[node name="ReleasePoint" type="Marker3D" parent="." unique_id=1872357194]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.5, 0)
+
+[node name="DiscVisual" type="MeshInstance3D" parent="." unique_id=633330916]
+mesh = SubResource("CylinderMesh_disc")
+
+[node name="OverviewCamera" type="Camera3D" parent="." unique_id=1087474357]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.7, 3.5)
+fov = 50.0
+
+[node name="Player" parent="." unique_id=1619161411 instance=ExtResource("5_player")]
+
+[node name="UI" type="CanvasLayer" parent="." unique_id=595942660]
+
+[node name="StatusPanel" type="PanelContainer" parent="UI" unique_id=1135035051]
+offset_left = 24.0
+offset_top = 24.0
+offset_right = 440.0
+offset_bottom = 78.0
+
+[node name="StatusLabel" type="Label" parent="UI/StatusPanel" unique_id=70297585]
+layout_mode = 2
+text = "Preparing arcade flight lab…"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="ControlsPanel" type="PanelContainer" parent="UI" unique_id=1699949861]
+offset_left = 24.0
+offset_top = 90.0
+offset_right = 220.0
+offset_bottom = 230.0
+
+[node name="Controls" type="VBoxContainer" parent="UI/ControlsPanel" unique_id=877999089]
+layout_mode = 2
+
+[node name="ProfileLabel" type="Label" parent="UI/ControlsPanel/Controls" unique_id=1733643645]
+layout_mode = 2
+text = "Disc profile"
+
+[node name="ProfileSelect" type="OptionButton" parent="UI/ControlsPanel/Controls" unique_id=954869556]
+layout_mode = 2
+
+[node name="ThrowButton" type="Button" parent="UI/ControlsPanel/Controls" unique_id=1592711526]
+layout_mode = 2
+text = "Throw fixed disc"
+
+[node name="ResetButton" type="Button" parent="UI/ControlsPanel/Controls" unique_id=817380853]
+layout_mode = 2
+text = "Reset"
+
+[connection signal="item_selected" from="UI/ControlsPanel/Controls/ProfileSelect" to="." method="_on_profile_select_item_selected"]
+[connection signal="pressed" from="UI/ControlsPanel/Controls/ThrowButton" to="." method="_on_throw_button_pressed"]
+[connection signal="pressed" from="UI/ControlsPanel/Controls/ResetButton" to="." method="_on_reset_button_pressed"]

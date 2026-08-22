@@ -1,7 +1,8 @@
-[gd_scene format=3 uid="uid://dp14f1lfvoe62"]
+[gd_scene format=3 uid="uid://df41fgwesle6v"]
 
-[ext_resource type="Script" uid="uid://bjgus5us5it2y" path="res://scripts/ui/flight_range.gd" id="1_flight_range"]
-[ext_resource type="PackedScene" uid="uid://bvig4iq42rl37" path="res://scenes/disc/disc.tscn" id="2_disc"]
+[ext_resource type="Script" path="res://scripts/ui/flight_range.gd" id="1_flight_range"]
+[ext_resource type="PackedScene" path="res://scenes/disc/disc.tscn" id="2_disc"]
+[ext_resource type="Script" path="res://scripts/disc/disc_data.gd" id="2_kbgsh"]
 [ext_resource type="Resource" path="res://data/discs/prototype_distance_driver.tres" id="3_prototype_driver"]
 [ext_resource type="Resource" path="res://data/discs/ol_reliable.tres" id="4_ol_reliable"]
 
@@ -23,7 +24,7 @@ size = Vector3(24, 0.03, 0.3)
 
 [node name="FlightRange" type="Node3D" unique_id=1793237804]
 script = ExtResource("1_flight_range")
-available_disc_data = Array[DiscData]([ExtResource("3_prototype_driver"), ExtResource("4_ol_reliable")])
+available_disc_data = Array[ExtResource("2_kbgsh")]([ExtResource("3_prototype_driver"), ExtResource("4_ol_reliable")])
 
 [node name="DirectionalLight3D" type="DirectionalLight3D" parent="." unique_id=2028524495]
 transform = Transform3D(0.90630776, 0.34618863, -0.24240388, 0, 0.57357645, 0.81915206, 0.42261827, -0.74240386, 0.5198368, 0, 0, 0)

@@ -2,88 +2,80 @@
 
 ## Purpose
 
-Hyzer Flip is being built in stages: a flight lab first, then player mechanics,
-disc interactions, and eventually a multiplayer arena shooter. This document
-defines the boundaries that keep those stages independently tunable.
+Hyzer Flip uses a deterministic, authored arcade flight model. The arcade
+flight lab is the project entry scene and the current player-facing test space;
+future arena gameplay will build on the same command, simulation, and state
+boundaries.
 
 ## Current project layout
 
 ```text
-data/discs/       Disc and aerodynamic Resource data
-scenes/disc/      Reusable disc presentation scene
-scenes/flight_lab/ Controlled flight-test scene
-scenes/flight_range/ Visual ground-range measurement scene
-scripts/disc/     Disc presentation and disc-data types
-scripts/flight/   Flight state and flight simulation
-scripts/throw/    Throw input data
-scripts/ui/       Flight-lab and range UI behavior
+data/discs/                 Authored arcade mold Resources
+scenes/arcade_flight_lab/   Main playable flight-lab scene
+scenes/player/              Reusable player presentation and controls
+scripts/flight/             Pure arcade simulation and state types
+scripts/player/             Player intent collection and local presentation
+scripts/ui/                 Arcade-lab state presentation
+tests/                      Deterministic arcade-flight fixture
 ```
 
-`scenes/` is the canonical location for all `.tscn` files. Root-level duplicate
-scenes are not part of the project structure.
+`scenes/` is the canonical location for Godot scenes. `project.godot` starts
+`scenes/arcade_flight_lab/arcade_flight_lab.tscn`.
 
 ## Dependency direction
 
 ```text
-Player input / Flight Lab UI
-            |
-            v
-      Throw parameters or command
-            |
-            v
-Flight simulation <--- Disc and environment data
-            |
-            v
- Flight state / collision result
-            |
-            v
-Disc scene, visuals, audio, gameplay effects, networking presentation
+Player input
+    |
+    v
+ArcadeThrowCommand ---> ArcadeFlightProfile + ArcadeFlightEnvironment
+    |                                  |
+    +----------> ArcadeFlightSimulator <+
+                        |
+                        v
+                 ArcadeFlightState
+                        |
+                        v
+     Arcade lab presentation, future collision adapter, networking
 ```
 
-Dependencies flow downward. Flight simulation must not import or query UI,
-player, scene-tree, renderer, or network state. Presenters may read simulation
-state, but they must not be the source of its rules.
+Dependencies flow downward. The simulator must not read player input, scene
+nodes, physics-server state, rendering state, or network state. Presenters may
+read explicit simulation state but never define flight rules.
 
-## Data and simulation ownership
+## Ownership
 
 | Concern | Owner | Notes |
 | --- | --- | --- |
-| Mold mass, diameter, inertia, and coefficient tables | `DiscData` and `AerodynamicData` Resources | Data, not bespoke scripts per disc |
-| Release inputs | `ThrowParameters` now; a gameplay throw command later | Converts player-facing units at the boundary |
-| Wind / air environment | `FlightEnvironment` | Pure world-space wind input; labs and future gameplay may supply it, but do not own aerodynamic rules |
-| Aerodynamic integration | `FlightSimulator` | Pure 120 Hz midpoint solver over complete flight state |
-| Scene transform and visuals | `Disc` scene | Projects `FlightState` onto the scene transform; never owns solver position |
-| Lab ground-distance measurement | `scenes/flight_range/` | Observes presentation segments and stops at a horizontal ground-plane crossing; not authoritative collision |
-| Flight Range disc selection | Flight Range UI | Selects an injected immutable `DiscData` resource only while the disc is idle |
-| Input collection | Flight Lab or future player controller | Never belongs in the simulator |
-| Collision queries and response | A dedicated gameplay/physics adapter | Must be deterministic and separate from aerodynamic forces |
-| Network authority | Future server simulation | Clients predict and render; they do not define the result |
+| Arcade mold identity | `ArcadeFlightProfile` Resources | Authored charge, phase, bank, launch-pitch, glide, and range guidance under `data/discs/` |
+| Release input | `ArcadeThrowCommand` | Immutable snapshot of aim, charge, bank, pitch, origin, and spin side |
+| Arcade environment | `ArcadeFlightEnvironment` | Explicit global gravity input; no `Node` or physics-server access |
+| Flight integration | `ArcadeFlightSimulator` | Pure fixed-step solver over explicit state and immutable inputs |
+| Airborne state | `ArcadeFlightState` | Position, velocity, heading, orientation, bank, phase, travel, tick, and lifecycle |
+| Player controls | `scenes/player/` and `scripts/player/` | Collect local input and emit an immutable throw command |
+| Arcade flight lab | `scenes/arcade_flight_lab/` | Drives fixed simulation time, projects state, and may visually stop at a ground-plane crossing |
+| Collision and projectile response | Future adapter | Must turn queries into explicit deterministic results outside the solver |
+| Network authority | Future server simulation | Clients predict and present; they do not define results |
 
-## Multiplayer direction
-
-Multiplayer should be server-authoritative. A client sends a compact, validated
-throw command; the server simulates the flight and publishes state snapshots.
-Clients may predict their own throws and reconcile to server snapshots for
-responsiveness.
-
-Do not make Godot/Jolt rigid-body simulation the authoritative disc-flight
-implementation. Different machines and frame timing can produce different
-results. The authoritative path must instead use the same explicit simulation
-state, timestep, inputs, and collision rules on every server run.
+The lab's visual ground observation does not modify simulator state and is not
+authoritative collision, bounce, skip, rolling, player contact, or despawn
+logic.
 
 ## Scene rules
 
-- Scenes compose nodes and assets; they do not contain flight equations.
-- Scripts on scenes adapt state to Godot transforms and gameplay events.
-- Reusable objects live in their own scene directory and are instantiated by
-  gameplay or lab scenes.
-- Lab-only controls stay under `scenes/flight_lab/` and must not become a
-  dependency of future player scenes.
+- Scenes compose nodes, resources, and signals; they do not own flight
+  equations.
+- The player owns local input and emits commands upward. The lab coordinates a
+  player command with the simulation; it does not inspect player internals.
+- Future arena scenes own spawning and gameplay lifecycle. The reusable player
+  scene must not assume a particular lab or arena parent.
+- New collision categories and projectile outcomes require a dedicated adapter
+  and documented ownership before they are added.
 
 ## Documentation ownership
 
-- `docs/flight-model.md` is the source of truth for units, coordinate
-  conventions, simulation scope, and model limitations.
-- This document is the source of truth for dependency direction and ownership.
-- Update the applicable document in the same change whenever a listed boundary
-  or convention changes.
+- `docs/flight-model.md` defines simulation conventions and known limitations.
+- `docs/disc-molds.md` defines mold identities and data boundaries.
+- `docs/arena-shooter.md` defines future projectile, round, and control
+  requirements.
+- This document defines scene and dependency ownership.

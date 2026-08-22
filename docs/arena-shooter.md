@@ -74,13 +74,13 @@ it may only predict the geometry and state known to that client.
 | Anhyzer angle | E | Increase anhyzer release angle |
 | Jump | Space | Supports a future wall-jump mechanic |
 | Crouch | Ctrl | Supports a future hold-to-slide mechanic |
-| Aim and charge | Hold right mouse button | Aim, charge a throw, and show trajectory preview |
-| Throw | Left mouse button | Release the disc projectile |
+| Charge and throw | Hold/release left mouse button | Hold to charge; release to launch the disc projectile |
+| Aim / trajectory preview | Right mouse button | Future camera tightening and path preview; not implemented yet |
 | Menu | Tab | Open the menu |
 
-Input actions should express gameplay intent (for example, `throw_charge` and
-`throw_disc`) rather than embed device keys in gameplay code. Future wall-jump
-and slide mechanics are not part of the current implementation scope.
+Input actions should express gameplay intent (for example, `throw_charge`) rather
+than embed device keys in gameplay code. Future wall-jump and slide mechanics are
+not part of the current implementation scope.
 
 ## Related documents
 

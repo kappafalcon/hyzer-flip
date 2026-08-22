@@ -1,0 +1,54 @@
+[gd_resource type="Resource" script_class="ArcadeFlightProfile" format=3 uid="uid://cigws6v1ymdap"]
+
+[ext_resource type="Script" uid="uid://df2f7iv1vpij7" path="res://scripts/flight/arcade_flight_profile.gd" id="1_profile"]
+
+[sub_resource type="Curve" id="Curve_phase_bank"]
+_limits = [0.0, 1.0, -60.0, 60.0]
+_data = [Vector2(0, 0), 0.0, 90.0, 0, 0, Vector2(0.3, 32), 90.0, 28.0, 0, 0, Vector2(1, 52), 28.0, 0.0, 0, 0]
+point_count = 3
+
+[sub_resource type="Curve" id="Curve_charge_glide"]
+_data = [Vector2(0, 0.65), 0.0, 0.35, 0, 0, Vector2(1, 1), 0.35, 0.0, 0, 0]
+point_count = 2
+
+[sub_resource type="Curve" id="Curve_charge_phase_rate"]
+_data = [Vector2(0, 0.85), 0.0, 0.15, 0, 0, Vector2(1, 1), 0.15, 0.0, 0, 0]
+point_count = 2
+
+[sub_resource type="Curve" id="Curve_charge_speed"]
+_data = [Vector2(0, 0.6), 0.0, 0.4, 0, 0, Vector2(1, 1), 0.4, 0.0, 0, 0]
+point_count = 2
+
+[sub_resource type="Curve" id="Curve_phase_speed"]
+_data = [Vector2(0, 1), 0.0, -0.28, 0, 0, Vector2(1, 0.72), -0.28, 0.0, 0, 0]
+point_count = 2
+
+[sub_resource type="Curve" id="Curve_launch_pitch_stability"]
+_limits = [0.0, 1.0, -7.0, 7.0]
+_data = [Vector2(0, -7), 0.0, 7.0, 0, 0, Vector2(0.5, 0), 7.0, 7.0, 0, 0, Vector2(1, 7), 7.0, 0.0, 0, 0]
+point_count = 3
+
+[sub_resource type="Curve" id="Curve_phase_vertical_acceleration"]
+_limits = [0.0, 1.0, 0.0, 9.81]
+_data = [Vector2(0, 9.81), 0.0, 0.0, 0, 0, Vector2(0.18, 7.5), 0.0, 0.0, 0, 0, Vector2(0.45, 3.5), 0.0, 0.0, 0, 0, Vector2(1, 0), 0.0, 0.0, 0, 0]
+point_count = 4
+
+[resource]
+resource_name = "Utility Driver Arcade Draft"
+script = ExtResource("1_profile")
+profile_id = &"utility_driver_draft"
+stability = 0
+base_forward_speed_mps = 20.0
+phase_duration_seconds = 2.7
+maximum_travel_distance_meters = 55.0
+maximum_bank_degrees = 60.0
+bank_response_degrees_per_second = 160.0
+maximum_heading_turn_degrees_per_second = 75.0
+maximum_launch_pitch_degrees = 30.0
+speed_multiplier_by_charge = SubResource("Curve_charge_speed")
+glide_multiplier_by_charge = SubResource("Curve_charge_glide")
+phase_rate_multiplier_by_charge = SubResource("Curve_charge_phase_rate")
+speed_multiplier_by_phase = SubResource("Curve_phase_speed")
+bank_bias_degrees_by_phase = SubResource("Curve_phase_bank")
+vertical_acceleration_mps2_by_phase = SubResource("Curve_phase_vertical_acceleration")
+stability_bank_degrees_by_launch_pitch = SubResource("Curve_launch_pitch_stability")

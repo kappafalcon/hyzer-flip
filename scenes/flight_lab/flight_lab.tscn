@@ -1,7 +1,7 @@
-[gd_scene format=3 uid="uid://bdngooquan4ok"]
+[gd_scene format=3 uid="uid://dpnwiq4qrst7n"]
 
-[ext_resource type="Script" uid="uid://bfpuhaysbq5oh" path="res://scripts/ui/flight_lab.gd" id="1_55n6i"]
-[ext_resource type="PackedScene" uid="uid://bvig4iq42rl37" path="res://scenes/disc/disc.tscn" id="2_72a37"]
+[ext_resource type="Script" path="res://scripts/ui/flight_lab.gd" id="1_55n6i"]
+[ext_resource type="PackedScene" path="res://scenes/disc/disc.tscn" id="2_72a37"]
 
 [node name="FlightLab" type="Node3D" unique_id=693876461]
 script = ExtResource("1_55n6i")
