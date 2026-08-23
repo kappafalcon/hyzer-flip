@@ -21,16 +21,22 @@ Discs are physical projectiles, never hitscan attacks.
 ### Arcade flight policy
 
 Arena throws use deterministic, disc-golf-inspired trajectories rather than
-literal field-distance simulation. Design combat encounters around an effective
-100–200 ft threat space. Longer throws may provide movement pressure, scouting,
-or route control, but must not become reliable moving-target attacks.
+literal field-distance simulation. The current flight-lab calibration keeps
+full-charge throws under 100 ft; future combat-range expansion must be an
+intentional balance change. Throws must not become reliable moving-target
+attacks.
 
 Flight identity remains legible across release angles. The utility driver must
-support spike-hyzer, straight-to-fade corner, and controlled flex-to-flat lines.
+hold straight through its apex, then spike-fade hard around corner cover without
+inverting. It rolls progressively into that fade after its apex, then applies
+bank-driven descent so an uphill release becomes a weighted spike instead of
+coasting in the sky. Hyzer adds to, rather than being replaced by, the mold's
+late fade. An uphill hyzer must rise to its apex before falling through that
+fade to the ground. Its fixed lab release reaches visual ground within 0.8
+seconds. It also supports a controlled flex-to-flat line.
 The beat-in distance driver must support maximum-power hyzer-flip-to-flat laser,
 flat-release turning-S, and anhyzer-to-roller lines within its configured
-envelope. The natural finish and turn directions mirror for backhand and
-forehand spin direction.
+envelope. Fade and turn directions mirror for opposite release orientations.
 
 This is authored gameplay calibration, not a hidden correction: flight profile,
 release envelope, projectile collision behavior, and proximity capture are
@@ -74,13 +80,13 @@ it may only predict the geometry and state known to that client.
 | Anhyzer angle | E | Increase anhyzer release angle |
 | Jump | Space | Supports a future wall-jump mechanic |
 | Crouch | Ctrl | Supports a future hold-to-slide mechanic |
-| Aim and charge | Hold right mouse button | Aim, charge a throw, and show trajectory preview |
-| Throw | Left mouse button | Release the disc projectile |
+| Charge and throw | Hold/release left mouse button | Hold to charge; release to launch the disc projectile |
+| Aim / trajectory preview | Right mouse button | Future camera tightening and path preview; not implemented yet |
 | Menu | Tab | Open the menu |
 
-Input actions should express gameplay intent (for example, `throw_charge` and
-`throw_disc`) rather than embed device keys in gameplay code. Future wall-jump
-and slide mechanics are not part of the current implementation scope.
+Input actions should express gameplay intent (for example, `throw_charge`) rather
+than embed device keys in gameplay code. Future wall-jump and slide mechanics are
+not part of the current implementation scope.
 
 ## Related documents
 
