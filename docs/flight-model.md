@@ -22,12 +22,14 @@ The simulation uses SI units internally.
 | Bank and launch pitch | degrees | `ArcadeThrowCommand` and `ArcadeFlightProfile` |
 
 Godot world +Y is up. Arcade horizontal forward uses the project's -Z
-convention. Positive bank turns a natural-right-finish throw left; the opposite
-spin direction mirrors that lateral behavior.
+convention. Positive bank produces leftward fade; the opposite fade direction
+mirrors that lateral behavior.
 
 ## Flight contract
 
-Arena combat is designed around a roughly 100–200 ft effective threat space.
+The current flight-lab calibration keeps full-charge, 2° shallow-uphill throws
+under 100 ft and reaches the visual ground plane within 0.9 seconds (0.8
+seconds for the utility driver).
 Profile range guidance informs balance but does not terminate an airborne
 state. Flight identity is entirely authored in `ArcadeFlightProfile` Resources:
 
@@ -40,15 +42,20 @@ state. Flight identity is entirely authored in `ArcadeFlightProfile` Resources:
 Release bank chooses the initial hyzer or anhyzer line. Launch pitch is a
 separate signed stability modifier: downward shifts a profile toward turn and
 upward shifts it toward fade. Both are bounded, inspectable profile behavior;
-neither is hidden aim correction.
+neither is hidden aim correction. Every valid profile must apply a signed
+launch-pitch bias: all sampled downhill pitches add turn and all sampled uphill
+pitches add fade. Profiles that omit either response are rejected before
+simulation.
 
 ## Simulation ownership
 
 `ArcadeFlightSimulator` is a pure fixed-step solver. It accepts explicit
 `ArcadeFlightState`, immutable `ArcadeFlightProfile`,
-`ArcadeFlightEnvironment`, and timestep inputs; it returns a new explicit
-state. It does not read or modify `Node`, transform, input, renderer,
-physics-server, or network state.
+`ArcadeFlightEnvironment`, and timestep inputs; it returns an explicit next
+state without mutating its input. A high-throughput caller can supply a
+distinct preallocated output state to `step_into()` and double-buffer it per
+projectile to avoid per-tick allocations. It does not read or modify `Node`,
+transform, input, renderer, physics-server, or network state.
 
 The intended timestep is `ArcadeFlightSimulator.FIXED_TIMESTEP_SECONDS`
 (120 Hz). A caller may accumulate engine time, but render-frame timing must not
@@ -63,7 +70,11 @@ Heading curvature is a bounded steering impulse. The current solver scales it
 by the squared remaining phase, so hard-fading or lofted discs cannot continue
 turning until they boomerang back toward release after phase completion. Bank
 continues to orient the disc toward its turn/fade side and reduces vertical
-glide support by its cosine.
+glide support by its cosine. A profile can additionally author a banked descent
+acceleration; it scales with bank magnitude to pull a spike-fading mold toward
+the ground after its apex without changing its unbanked launch. Positive launch
+pitch strengthens that banked descent, so an uphill hyzer can form an arc before
+falling through its late fade rather than drifting sideways in the sky.
 
 ## Collision boundary and limitations
 
@@ -76,8 +87,9 @@ airborne segment and return explicit projectile/lifecycle results.
 
 ## Verification
 
-`tests/arcade_flight_architecture_test.gd` is the deterministic fixture. It
+`tests/flight/arcade_flight_architecture_test.gd` is the deterministic fixture. It
 checks profile validation, finite repeatable state, pitch stability ordering,
-phase/range non-termination, mirrored lateral behavior, and the current
-overstable, neutral, and understable release envelopes. It is a regression
-fixture for authored arcade behavior, not real-world-distance validation.
+phase/range non-termination, mirrored lateral behavior, visual ground-plane
+arrival-time and range caps, and the current overstable, neutral, and
+understable release envelopes. It is a regression fixture for authored arcade
+behavior, not real-world-distance validation.

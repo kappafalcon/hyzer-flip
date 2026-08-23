@@ -37,7 +37,7 @@ func launch(
 		command.charge,
 		command.release_bank_degrees,
 		command.launch_pitch_degrees,
-		command.get_spin_sign(),
+		command.get_fade_sign(),
 	)
 	state.launch_pitch_stability_bias_degrees = profile.sample_launch_pitch_stability_bias(
 		command.launch_pitch_degrees
@@ -58,13 +58,33 @@ func step(
 	delta: float,
 	environment: ArcadeFlightEnvironment = null,
 ) -> ArcadeFlightState:
-	if delta <= 0.0 or state.lifecycle != ArcadeFlightState.Lifecycle.FLYING:
-		return state.copy()
-	assert(profile.is_valid(), "Arcade flight profile is invalid.")
-	var flight_environment := environment if environment != null else ArcadeFlightEnvironment.new()
-	assert(flight_environment.is_valid(), "Arcade flight environment is invalid.")
-
 	var next_state := state.copy()
+	var flight_environment := environment if environment != null else ArcadeFlightEnvironment.new()
+	step_into(state, profile, delta, flight_environment, next_state)
+	return next_state
+
+
+## Advances a snapshot into a distinct caller-owned output buffer.
+##
+## Use this allocation-free form for high-throughput simulation, then swap the
+## input and output buffers before the next fixed tick.
+func step_into(
+	state: ArcadeFlightState,
+	profile: ArcadeFlightProfile,
+	delta: float,
+	environment: ArcadeFlightEnvironment,
+	output_state: ArcadeFlightState,
+) -> void:
+	assert(output_state != state, "Arcade flight output state must differ from its input state.")
+	if output_state == state:
+		return
+	output_state.overwrite_from(state)
+	if delta <= 0.0 or state.lifecycle != ArcadeFlightState.Lifecycle.FLYING:
+		return
+	assert(profile.is_valid(), "Arcade flight profile is invalid.")
+	assert(environment.is_valid(), "Arcade flight environment is invalid.")
+
+	var next_state := output_state
 	var phase_rate := (
 		profile.sample_charge_phase_rate_multiplier(state.charge)
 		/ profile.phase_duration_seconds
@@ -90,8 +110,16 @@ func step(
 		* profile.sample_charge_glide_multiplier(next_state.charge)
 		* cos(deg_to_rad(absf(next_state.bank_degrees)))
 	)
+	var banked_descent_acceleration := (
+		profile.banked_descent_acceleration_mps2
+		* sin(deg_to_rad(absf(next_state.bank_degrees)))
+		* (
+			1.0 + maxf(state.launch_pitch_degrees, 0.0)
+			/ profile.maximum_launch_pitch_degrees
+		)
+	)
 	var vertical_speed := state.velocity.y + (
-		glide_acceleration - flight_environment.gravity_mps2
+		glide_acceleration - environment.gravity_mps2 - banked_descent_acceleration
 	) * delta
 	next_state.velocity = next_state.horizontal_heading * speed
 	next_state.velocity.y = vertical_speed
@@ -107,7 +135,6 @@ func step(
 	next_state.elapsed_time += delta
 	next_state.tick += 1
 	_apply_terminal_lifecycle(next_state, profile)
-	return next_state
 
 
 func _build_launch_direction(command: ArcadeThrowCommand) -> Vector3:
@@ -128,7 +155,7 @@ func _calculate_target_bank_degrees(
 		+ state.launch_pitch_stability_bias_degrees
 	)
 	return clampf(
-		mold_relative_bank * state.spin_sign,
+		mold_relative_bank * state.fade_sign,
 		-profile.maximum_bank_degrees,
 		profile.maximum_bank_degrees,
 	)

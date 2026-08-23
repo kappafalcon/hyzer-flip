@@ -14,15 +14,23 @@ enum Stability {
 }
 
 const CURVE_SAMPLE_OFFSETS := [0.0, 0.25, 0.5, 0.75, 1.0]
+const DOWNHILL_PITCH_STABILITY_SAMPLE_OFFSETS := [0.0, 0.125, 0.25, 0.375, 0.4999]
+const UPHILL_PITCH_STABILITY_SAMPLE_OFFSETS := [0.5001, 0.625, 0.75, 0.875, 1.0]
 
 @export_category("Identity")
 @export var profile_id: StringName
 @export var stability: Stability = Stability.NEUTRAL
 
+@export_category("Authoring")
+## Human-readable mold intent and tuning guide. This never affects simulation.
+@export_multiline var authoring_notes: String = ""
+
 @export_category("Flight Limits")
 @export_range(0.0, 100.0, 0.1, "suffix:m/s")
 var base_forward_speed_mps: float = 0.0
 
+## Duration for authored phase curves to progress from 0.0 to 1.0; this does
+## not cap the disc's airborne lifetime.
 @export_range(0.0, 20.0, 0.01, "suffix:s")
 var phase_duration_seconds: float = 0.0
 
@@ -37,6 +45,10 @@ var bank_response_degrees_per_second: float = 0.0
 
 @export_range(0.0, 720.0, 0.1, "suffix:degrees/s")
 var maximum_heading_turn_degrees_per_second: float = 0.0
+
+## Additional downward acceleration applied in proportion to bank magnitude.
+@export_range(0.0, 100.0, 0.1, "suffix:m/s²")
+var banked_descent_acceleration_mps2: float = 0.0
 
 @export_range(0.0, 90.0, 0.1, "suffix:degrees")
 var maximum_launch_pitch_degrees: float = 0.0
@@ -79,6 +91,9 @@ func validate() -> PackedStringArray:
 		errors.append("Bank response must be finite and positive.")
 	if not _is_positive_finite(maximum_heading_turn_degrees_per_second):
 		errors.append("Maximum heading turn rate must be finite and positive.")
+	if not is_finite(banked_descent_acceleration_mps2) \
+		or banked_descent_acceleration_mps2 < 0.0:
+		errors.append("Banked descent acceleration must be finite and non-negative.")
 	if not _is_positive_finite(maximum_launch_pitch_degrees):
 		errors.append("Maximum launch pitch must be finite and positive.")
 	if not is_finite(roller_entry_phase) \
@@ -105,6 +120,7 @@ func validate() -> PackedStringArray:
 		"Launch-pitch stability",
 		errors,
 	)
+	_validate_signed_launch_pitch_stability(errors)
 	return errors
 
 
@@ -192,6 +208,19 @@ func _validate_finite_curve(
 	for offset in CURVE_SAMPLE_OFFSETS:
 		if not is_finite(curve.sample(offset)):
 			errors.append("%s curve samples must be finite." % label)
+			return
+
+
+func _validate_signed_launch_pitch_stability(errors: PackedStringArray) -> void:
+	if stability_bank_degrees_by_launch_pitch == null:
+		return
+	for offset in DOWNHILL_PITCH_STABILITY_SAMPLE_OFFSETS:
+		if stability_bank_degrees_by_launch_pitch.sample(offset) >= 0.0:
+			errors.append("Launch-pitch stability must apply turn bias for every downhill pitch sample.")
+			return
+	for offset in UPHILL_PITCH_STABILITY_SAMPLE_OFFSETS:
+		if stability_bank_degrees_by_launch_pitch.sample(offset) <= 0.0:
+			errors.append("Launch-pitch stability must apply fade bias for every uphill pitch sample.")
 			return
 
 

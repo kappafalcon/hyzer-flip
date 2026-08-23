@@ -7,21 +7,35 @@ throw, and inspect the resulting line.
 
 ## Project structure
 
+The target layout below names both the current project boundaries and planned
+ones. Create a future directory only when its first owned asset or system is
+introduced.
+
 ```text
-hyzer-flip/
-├── data/discs/                 Arcade mold Resources
-├── docs/                       Architecture and gameplay contracts
+res://
+├── assets/                     Add only when art, audio, or shaders arrive
+├── data/
+│   ├── discs/                  ArcadeFlightProfile Resources
+│   ├── arena/                  Future round, spawn, and map config Resources
+│   └── projectiles/            Future projectile-behavior Resources
+├── docs/                       Durable architecture and gameplay contracts
 ├── scenes/
-│   ├── arcade_flight_lab/      Main scene
-│   └── player/                 Reusable player scene
+│   ├── arcade_flight_lab/      Current main, playable simulation harness
+│   ├── player/                 Reusable player scene
+│   ├── arena/                  Future match composition and spawning
+│   ├── shared/                 Reusable non-player scenes, when needed
+│   └── ui/                     Reusable UI scenes
 ├── scripts/
-│   ├── flight/                 Pure arcade solver, state, commands, profiles
-│   ├── player/                 Player controls and presentation
-│   └── ui/                     Arcade-lab presentation
+│   ├── flight/                 Pure deterministic model
+│   ├── player/                 Input collection and player presentation
+│   ├── labs/                   Lab scene controllers
+│   ├── arena/                  Future match lifecycle and spawning
+│   ├── projectiles/            Future collision/query adapters and outcomes
+│   └── ui/                     UI-only presenters and controls
 ├── tests/
-│   └── arcade_flight_architecture_test.gd
-├── AGENTS.md
-└── project.godot
+│   ├── flight/                 Deterministic simulation fixtures
+│   ├── arena/                  Future match-flow tests
+│   └── projectiles/            Future collision/outcome tests
 ```
 
 ## Main scene
@@ -49,14 +63,15 @@ skip, rolling, player contact, and network authority are future explicit
 systems.
 
 See [architecture](docs/architecture.md), [flight model](docs/flight-model.md),
-[disc molds](docs/disc-molds.md), and [arena requirements](docs/arena-shooter.md).
+[disc molds](docs/disc-molds.md), [disc authoring](docs/disc-authoring.md), and
+[arena requirements](docs/arena-shooter.md).
 
 ## Verification
 
 Run the deterministic arcade fixture:
 
 ```sh
-godot --headless --path . --script res://tests/arcade_flight_architecture_test.gd
+godot --headless --path . --script res://tests/flight/arcade_flight_architecture_test.gd
 ```
 
 Run an editor parse scan:

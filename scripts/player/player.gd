@@ -51,7 +51,7 @@ func _request_arcade_throw(charge: float) -> void:
 			-30.0,
 			30.0,
 		),
-		ArcadeThrowCommand.SpinDirection.NATURAL_FINISH_RIGHT,
+		ArcadeThrowCommand.FadeDirection.NATURAL_FINISH_LEFT,
 	)
 	if not command.is_valid():
 		push_error("Player rejected invalid arcade throw command.")

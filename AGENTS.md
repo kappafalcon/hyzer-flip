@@ -49,6 +49,8 @@ player controls, rendering, or networking.
 - Before changing disc mold definitions, flight archetypes, or mold-specific
   arena abilities, read `docs/disc-molds.md` and use `$hyzer-flip-disc-molds`
   when it is available.
+- Before adding or materially retuning a disc mold, read `docs/disc-authoring.md`
+  and use `$hyzer-flip-disc-authoring` when it is available.
 - Use `$hyzer-flip-data-resources` for disc Resources, aerodynamic tables,
   projectile behavior configuration, data validation, or tunable balance values
   when available.

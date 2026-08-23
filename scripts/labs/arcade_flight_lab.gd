@@ -13,7 +13,6 @@ extends Node3D
 @onready var overview_camera: Camera3D = $OverviewCamera
 @onready var player: Node = $Player
 @onready var status_label: Label = $UI/StatusPanel/StatusLabel
-@onready var profile_select: OptionButton = $UI/ControlsPanel/Controls/ProfileSelect
 @onready var throw_button: Button = $UI/ControlsPanel/Controls/ThrowButton
 @onready var reset_button: Button = $UI/ControlsPanel/Controls/ResetButton
 
@@ -25,28 +24,37 @@ var has_landed := false
 
 
 func _ready() -> void:
-	profile_select.clear()
-	for profile in available_flight_profiles:
-		if profile != null:
-			profile_select.add_item(profile.resource_name)
-	var selected_index := available_flight_profiles.find(flight_profile)
-	if selected_index >= 0:
-		profile_select.select(selected_index)
 	if flight_profile == null:
 		push_error("Arcade Flight Lab requires an ArcadeFlightProfile.")
-		profile_select.disabled = true
 		throw_button.disabled = true
 		reset_button.disabled = true
 		return
 	var validation_errors := flight_profile.validate()
 	if not validation_errors.is_empty():
 		push_error("Arcade Flight Lab rejected invalid profile: %s" % ", ".join(validation_errors))
-		profile_select.disabled = true
 		throw_button.disabled = true
 		reset_button.disabled = true
 		return
 	player.connect("arcade_throw_requested", _on_player_arcade_throw_requested)
 	_on_reset_button_pressed()
+
+
+func _unhandled_input(event: InputEvent) -> void:
+	var selected_profile_id := StringName()
+	if event.is_action_pressed("select_utility_driver"):
+		selected_profile_id = &"utility_driver_draft"
+	elif event.is_action_pressed("select_neutral_mid"):
+		selected_profile_id = &"neutral_mid_draft"
+	elif event.is_action_pressed("select_beat_in_driver"):
+		selected_profile_id = &"beat_in_distance_driver_draft"
+	else:
+		return
+	for profile_index in range(available_flight_profiles.size()):
+		var profile := available_flight_profiles[profile_index]
+		if profile != null and profile.profile_id == selected_profile_id:
+			_on_profile_select_item_selected(profile_index)
+			get_viewport().set_input_as_handled()
+			return
 
 
 func _physics_process(delta: float) -> void:
@@ -105,8 +113,8 @@ func _on_throw_button_pressed() -> void:
 		Vector3.FORWARD,
 		1.0,
 		0.0,
-		8.0,
-		ArcadeThrowCommand.SpinDirection.NATURAL_FINISH_RIGHT,
+		2.0,
+		ArcadeThrowCommand.FadeDirection.NATURAL_FINISH_LEFT,
 	)
 	flight_state = simulator.launch(command, flight_profile)
 	simulation_time_accumulator = 0.0
@@ -115,7 +123,7 @@ func _on_throw_button_pressed() -> void:
 		flight_state.orientation,
 		flight_state.position,
 	)
-	status_label.text = "%s — fixed full-charge, 8° uphill release" % flight_profile.resource_name
+	status_label.text = "%s — fixed full-charge, 2° shallow-uphill release" % flight_profile.resource_name
 
 
 func _on_player_arcade_throw_requested(command: ArcadeThrowCommand) -> void:
@@ -150,7 +158,6 @@ func _on_profile_select_item_selected(index: int) -> void:
 	if flight_state != null \
 		and flight_state.lifecycle == ArcadeFlightState.Lifecycle.FLYING \
 		and not has_landed:
-		profile_select.select(available_flight_profiles.find(flight_profile))
 		return
 	if index < 0 or index >= available_flight_profiles.size():
 		return
@@ -160,7 +167,6 @@ func _on_profile_select_item_selected(index: int) -> void:
 	var validation_errors := selected_profile.validate()
 	if not validation_errors.is_empty():
 		push_error("Arcade Flight Lab rejected invalid profile: %s" % ", ".join(validation_errors))
-		profile_select.select(available_flight_profiles.find(flight_profile))
 		return
 	flight_profile = selected_profile
 	_on_reset_button_pressed()

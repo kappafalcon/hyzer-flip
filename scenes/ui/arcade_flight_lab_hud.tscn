@@ -1,0 +1,32 @@
+[gd_scene format=3 uid="uid://defe6a0st7oka"]
+
+[node name="UI" type="CanvasLayer" unique_id=1334796670]
+
+[node name="StatusPanel" type="PanelContainer" parent="." unique_id=1956409839]
+offset_left = 24.0
+offset_top = 24.0
+offset_right = 440.0
+offset_bottom = 78.0
+
+[node name="StatusLabel" type="Label" parent="StatusPanel" unique_id=711971880]
+layout_mode = 2
+text = "Preparing arcade flight lab…"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="ControlsPanel" type="PanelContainer" parent="." unique_id=1182499363]
+offset_left = 24.0
+offset_top = 90.0
+offset_right = 220.0
+offset_bottom = 174.0
+
+[node name="Controls" type="VBoxContainer" parent="ControlsPanel" unique_id=1815675064]
+layout_mode = 2
+
+[node name="ThrowButton" type="Button" parent="ControlsPanel/Controls" unique_id=1427565427]
+layout_mode = 2
+text = "Throw fixed disc"
+
+[node name="ResetButton" type="Button" parent="ControlsPanel/Controls" unique_id=323632695]
+layout_mode = 2
+text = "Reset"

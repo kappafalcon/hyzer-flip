@@ -13,10 +13,11 @@ boundaries.
 data/discs/                 Authored arcade mold Resources
 scenes/arcade_flight_lab/   Main playable flight-lab scene
 scenes/player/              Reusable player presentation and controls
+scenes/ui/                  Reusable flight-lab HUD composition
 scripts/flight/             Pure arcade simulation and state types
+scripts/labs/               Playable flight-lab coordination and presentation
 scripts/player/             Player intent collection and local presentation
-scripts/ui/                 Arcade-lab state presentation
-tests/                      Deterministic arcade-flight fixture
+tests/flight/               Deterministic arcade-flight fixture
 ```
 
 `scenes/` is the canonical location for Godot scenes. `project.godot` starts
@@ -48,7 +49,7 @@ read explicit simulation state but never define flight rules.
 | Concern | Owner | Notes |
 | --- | --- | --- |
 | Arcade mold identity | `ArcadeFlightProfile` Resources | Authored charge, phase, bank, launch-pitch, glide, and range guidance under `data/discs/` |
-| Release input | `ArcadeThrowCommand` | Immutable snapshot of aim, charge, bank, pitch, origin, and spin side |
+| Release input | `ArcadeThrowCommand` | Immutable snapshot of aim, charge, bank, pitch, origin, and fade direction |
 | Arcade environment | `ArcadeFlightEnvironment` | Explicit global gravity input; no `Node` or physics-server access |
 | Flight integration | `ArcadeFlightSimulator` | Pure fixed-step solver over explicit state and immutable inputs |
 | Airborne state | `ArcadeFlightState` | Position, velocity, heading, orientation, bank, phase, travel, tick, and lifecycle |
