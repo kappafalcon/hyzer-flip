@@ -7,6 +7,18 @@ flight lab is the project entry scene and the current player-facing test space;
 future arena gameplay will build on the same command, simulation, and state
 boundaries.
 
+## Flight-model migration status
+
+`docs/flight-model-v2.md` is the target contract for new flight-model work on
+this branch. `scripts/flight/arcade/arcade_flight_prototype.gd` is its currently
+executable subset: it implements deterministic powered and late airborne phases,
+but not the target ground-contact states or production data boundary.
+
+The `ArcadeThrowCommand` / `ArcadeFlightProfile` / `ArcadeFlightSimulator`
+architecture below describes the legacy implementation that remains in the
+project during migration. `docs/flight-model.md` documents that implementation;
+neither it nor the current mold-authoring documents override the v2 target.
+
 ## Current project layout
 
 ```text
@@ -75,7 +87,10 @@ logic.
 
 ## Documentation ownership
 
-- `docs/flight-model.md` defines simulation conventions and known limitations.
+- `docs/flight-model-v2.md` defines the target flight behavior and explicitly
+  separates implemented prototype behavior from future design targets.
+- `docs/flight-model.md` records legacy simulation conventions and limitations
+  while that implementation remains in the project.
 - `docs/disc-molds.md` defines mold identities and data boundaries.
 - `docs/arena-shooter.md` defines future projectile, round, and control
   requirements.

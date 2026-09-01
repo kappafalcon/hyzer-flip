@@ -1,5 +1,21 @@
 # Hyzer-Flip Arcade Disc Flight Model
 
+## Status and authority
+
+This document is the target flight-model contract for the
+`feature/flight_model_v2` branch. New v2 design and implementation work must
+follow this contract.
+
+[`arcade_flight_prototype.gd`](../scripts/flight/arcade/arcade_flight_prototype.gd)
+is the currently executable subset of this design. Its two airborne phases are
+implemented and deterministically exercised, while ground contact, skip, roll,
+stop/slide, and the proposed production data shape remain design targets unless
+the code and validation say otherwise.
+
+[`flight-model.md`](flight-model.md) records the legacy flight implementation
+during migration. It may explain existing code, but it does not override this
+target contract.
+
 ## Purpose
 
 This document defines the projectile flight model for an arcade-style arena shooter built around disc-golf shot shaping.

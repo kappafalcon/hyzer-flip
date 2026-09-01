@@ -39,21 +39,26 @@ player controls, rendering, or networking.
 
 - Use `$godot-4-workflow` for Godot scenes, GDScript APIs, resources, input
   actions, and project-setting changes when the skill is available.
-- Before changing flight code or arcade disc resources, read
-  `docs/flight-model.md`.
-- Keep that document current when changing units, coordinate conventions,
-  simulation scope, or validation status.
-- Use `$hyzer-flip-physics-integration` for fixed-step driving, collision-query
-  adapters, bounce/skip integration, state presentation, or deterministic
-  collision boundaries when available.
+- Treat `docs/flight-model-v2.md` as this branch's target flight-model contract.
+  Before changing v2 flight code or disc data, read it and use
+  `$hyzer-flip-v2-flight-model` when available.
+- Treat `scripts/flight/arcade/arcade_flight_prototype.gd` as the executable
+  subset of that target. `docs/flight-model.md` documents the legacy
+  implementation during migration and must not override the v2 contract.
+- Keep `docs/flight-model-v2.md` current when target units, coordinate
+  conventions, state semantics, simulation scope, or validation status change.
+- Use `$hyzer-flip-v2-physics-integration` for fixed-step driving,
+  collision-query adapters, skip/roll/stop integration, state presentation, or
+  deterministic collision boundaries when available.
 - Before changing disc mold definitions, flight archetypes, or mold-specific
-  arena abilities, read `docs/disc-molds.md` and use `$hyzer-flip-disc-molds`
-  when it is available.
+  arena abilities, read `docs/disc-molds.md` and the v2 contract. Use
+  `$hyzer-flip-v2-data-resources` for v2 mold data when available.
 - Before adding or materially retuning a disc mold, read `docs/disc-authoring.md`
-  and use `$hyzer-flip-disc-authoring` when it is available.
-- Use `$hyzer-flip-data-resources` for disc Resources, aerodynamic tables,
-  projectile behavior configuration, data validation, or tunable balance values
-  when available.
+  as legacy integration context, then use `$hyzer-flip-v2-disc-authoring` when
+  it is available. Do not carry legacy phase-curve or launch-pitch stability
+  requirements into v2 work.
+- Use `$hyzer-flip-v2-data-resources` for v2 disc Resources, projectile behavior
+  configuration, data validation, or tunable balance values when available.
 - Before changing scene organization, player boundaries, collision ownership, or
   networking, read `docs/architecture.md`.
 - Use `$hyzer-flip-scene-architecture` for reusable scene composition,
@@ -63,11 +68,11 @@ player controls, rendering, or networking.
   reconciliation, multiplayer spawning, or network determinism when available.
 - Before changing arena rounds, disc projectile interactions, lock-on behavior,
   trajectory previews, or player controls, read `docs/arena-shooter.md`.
-- Use `$hyzer-flip-rounds` for match flow, `$hyzer-flip-projectiles` for disc
-  interactions and previews, and `$hyzer-flip-controls` for player input when
-  those skills are available.
-- Use `$hyzer-flip-testing` for deterministic simulation tests, replay fixtures,
-  numerical baselines, and physics-validation work when available.
+- Use `$hyzer-flip-rounds` for match flow,
+  `$hyzer-flip-v2-projectiles` for v2 disc interactions and previews, and
+  `$hyzer-flip-controls` for player input when those skills are available.
+- Use `$hyzer-flip-v2-testing` for deterministic v2 simulation tests, replay
+  fixtures, numerical baselines, and physics-validation work when available.
 
 ## Validation
 

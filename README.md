@@ -12,7 +12,9 @@ ones. Create a future directory only when its first owned asset or system is
 introduced.
 
 ```text
-res://
+./
+├── .agents/
+│   └── skills/                 Branch-scoped flight-model-v2 Codex guidance
 ├── assets/                     Add only when art, audio, or shaders arrive
 ├── data/
 │   ├── discs/                  ArcadeFlightProfile Resources
@@ -54,6 +56,11 @@ Controls in the lab:
 
 ## Arcade flight architecture
 
+`docs/flight-model-v2.md` is the target flight contract on this branch, and the
+isolated prototype under `scripts/flight/arcade/` is its currently executable
+subset. The production classes described below remain the legacy implementation
+during migration.
+
 `ArcadeThrowCommand` captures immutable release input. `ArcadeFlightProfile`
 contains mold tuning. `ArcadeFlightSimulator` advances complete
 `ArcadeFlightState` at a deterministic 120 Hz timestep with explicit gravity
@@ -64,7 +71,9 @@ The current lab visualizes a ground-plane crossing, but collision, bounce,
 skip, rolling, player contact, and network authority are future explicit
 systems.
 
-See [architecture](docs/architecture.md), [flight model](docs/flight-model.md),
+See [architecture](docs/architecture.md),
+[flight-model-v2 target](docs/flight-model-v2.md),
+[legacy flight implementation](docs/flight-model.md),
 [disc molds](docs/disc-molds.md), [disc authoring](docs/disc-authoring.md), and
 [arena requirements](docs/arena-shooter.md).
 
