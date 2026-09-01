@@ -22,11 +22,13 @@ res://
 ├── scenes/
 │   ├── arcade_flight_lab/      Current main, playable simulation harness
 │   ├── player/                 Reusable player scene
+│   ├── tests/                  Isolated visual prototype scenes
 │   ├── arena/                  Future match composition and spawning
 │   ├── shared/                 Reusable non-player scenes, when needed
 │   └── ui/                     Reusable UI scenes
 ├── scripts/
-│   ├── flight/                 Pure deterministic model
+│   ├── flight/                 Current pure deterministic model
+│   │   └── arcade/             Isolated flight-model-v2 prototype
 │   ├── player/                 Input collection and player presentation
 │   ├── labs/                   Lab scene controllers
 │   ├── arena/                  Future match lifecycle and spawning
@@ -78,4 +80,10 @@ Run an editor parse scan:
 
 ```sh
 godot --headless --path . --editor --quit
+```
+
+Run the isolated flight-model-v2 prototype's deterministic matrix:
+
+```sh
+godot --headless --path . --scene res://scenes/tests/arcade_flight_lab.tscn
 ```

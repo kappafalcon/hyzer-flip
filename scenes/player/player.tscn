@@ -1,6 +1,7 @@
 [gd_scene format=3 uid="uid://cqg2houx8ebvp"]
 
 [ext_resource type="Script" uid="uid://b03olq6f2ke3h" path="res://scripts/player/player.gd" id="1_8afob"]
+[ext_resource type="Script" uid="uid://dnjbm5ujkf7rv" path="res://scripts/player/reticle.gd" id="2_dovo2"]
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_lhi6h"]
 radius = 0.4
@@ -20,9 +21,6 @@ shape = SubResource("CapsuleShape3D_lhi6h")
 [node name="MeshInstance3D" type="MeshInstance3D" parent="Visuals" unique_id=933821786]
 mesh = SubResource("CapsuleMesh_wt5dk")
 
-[node name="ThrowOrigin" type="Marker3D" parent="." unique_id=1858319763]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.5, -0.5)
-
 [node name="Cameras" type="Node3D" parent="." unique_id=2013291737]
 
 [node name="ThirdPersonPivot" type="Node3D" parent="Cameras" unique_id=1348073974]
@@ -39,7 +37,26 @@ spring_length = 4.0
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.5, 0)
 current = true
 
+[node name="ThrowOrigin" type="Marker3D" parent="Cameras/FirstPersonPivot/FirstPersonCamera" unique_id=1858319763]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -0.5)
+
 [node name="UI" type="CanvasLayer" parent="." unique_id=1338421771]
+
+[node name="Reticle" type="Control" parent="UI" unique_id=537557164]
+layout_mode = 3
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -20.0
+offset_top = -20.0
+offset_right = 20.0
+offset_bottom = 20.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+script = ExtResource("2_dovo2")
 
 [node name="PowerIndicator" type="ProgressBar" parent="UI" unique_id=1077402741]
 offset_left = 24.0
@@ -47,8 +64,6 @@ offset_top = 244.0
 offset_right = 220.0
 offset_bottom = 268.0
 max_value = 1.0
-show_percentage = true
-visible = false
 
 [node name="ReleaseAngleLabel" type="Label" parent="UI" unique_id=1863594002]
 offset_left = 24.0

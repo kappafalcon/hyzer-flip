@@ -2,39 +2,32 @@
 
 [ext_resource type="Script" uid="uid://df2f7iv1vpij7" path="res://scripts/flight/arcade_flight_profile.gd" id="1_profile"]
 
-; Phase bank target (degrees) by flight phase: 0.00=0, 0.20=0, 0.40=70, 1.00=70.
 [sub_resource type="Curve" id="Curve_phase_bank"]
 _limits = [0.0, 1.0, -75.0, 75.0]
 _data = [Vector2(0, 0), 0.0, 0.0, 0, 0, Vector2(0.2, 0), 0.0, 350.0, 0, 0, Vector2(0.4, 70), 350.0, 0.0, 0, 0, Vector2(1, 70), 0.0, 0.0, 0, 0]
 point_count = 4
 
-; Glide multiplier by charge: 0.00=0.30, 1.00=0.45.
 [sub_resource type="Curve" id="Curve_charge_glide"]
 _data = [Vector2(0, 0.3), 0.0, 0.15, 0, 0, Vector2(1, 0.45), 0.15, 0.0, 0, 0]
 point_count = 2
 
-; Phase-rate multiplier by charge: 0.00=0.85, 1.00=1.00.
 [sub_resource type="Curve" id="Curve_charge_phase_rate"]
 _data = [Vector2(0, 0.85), 0.0, 0.15, 0, 0, Vector2(1, 1), 0.15, 0.0, 0, 0]
 point_count = 2
 
-; Launch-speed multiplier by charge: 0.00=0.60, 1.00=1.00.
 [sub_resource type="Curve" id="Curve_charge_speed"]
 _data = [Vector2(0, 0.6), 0.0, 0.4, 0, 0, Vector2(1, 1), 0.4, 0.0, 0, 0]
 point_count = 2
 
-; Forward-speed multiplier by flight phase: 0.00=1.00, 1.00=0.98.
 [sub_resource type="Curve" id="Curve_phase_speed"]
 _data = [Vector2(0, 1), 0.0, -0.02, 0, 0, Vector2(1, 0.98), -0.02, 0.0, 0, 0]
 point_count = 2
 
-; Pitch stability bias (degrees): -30°=-4, flat=0, +30°=+4 fade.
 [sub_resource type="Curve" id="Curve_launch_pitch_stability"]
 _limits = [0.0, 1.0, -4.0, 4.0]
 _data = [Vector2(0, -4), 0.0, 4.0, 0, 0, Vector2(0.5, 0), 4.0, 4.0, 0, 0, Vector2(1, 4), 4.0, 0.0, 0, 0]
 point_count = 3
 
-; Vertical glide acceleration (m/s²) by phase: 0.00=9.81, 0.18=7.50, 0.45=0, 1.00=0.
 [sub_resource type="Curve" id="Curve_phase_vertical_acceleration"]
 _limits = [0.0, 1.0, 0.0, 9.81]
 _data = [Vector2(0, 9.81), 0.0, 0.0, 0, 0, Vector2(0.18, 7.5), 0.0, 0.0, 0, 0, Vector2(0.45, 0), 0.0, 0.0, 0, 0, Vector2(1, 0), 0.0, 0.0, 0, 0]
@@ -44,8 +37,9 @@ point_count = 4
 resource_name = "Utility Driver Arcade Draft"
 script = ExtResource("1_profile")
 profile_id = &"utility_driver_draft"
-authoring_notes = "Intent: hold straight through the apex, then roll into a progressive spike-fade without inverting. Uphill hyzer reinforces the weighted descent.\nPrimary controls: phase bank 0° → 70° by phase 0.40; 15 m/s² banked descent; +4° maximum uphill fade bias."
 stability = 0
+authoring_notes = "Intent: hold straight through the apex, then roll into a progressive spike-fade without inverting. Uphill hyzer reinforces the weighted descent.
+Primary controls: phase bank 0° → 70° by phase 0.40; 15 m/s² banked descent; +4° maximum uphill fade bias."
 base_forward_speed_mps = 25.0
 phase_duration_seconds = 0.864
 maximum_travel_distance_meters = 27.5
