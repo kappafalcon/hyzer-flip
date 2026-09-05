@@ -11,7 +11,7 @@ config_version=5
 [application]
 
 config/name="Hyzer Flip"
-run/main_scene="uid://cdk5fk7p38n6u"
+run/main_scene="res://scenes/tests/arcade_flight_v2_player_lab.tscn"
 config/features=PackedStringArray("4.7", "Forward Plus")
 config/icon="res://icon.svg"
 

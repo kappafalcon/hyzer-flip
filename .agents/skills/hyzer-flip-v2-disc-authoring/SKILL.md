@@ -21,6 +21,12 @@ executable calibration harness, not the final Resource schema.
   leaking fade into powered flight or by restoring legacy phase-curve rules.
 - Treat launch pitch as an explicit release input. Do not assume the v1 rule
   that pitch must directly bias stability unless v2 deliberately adopts it.
+- For the current prototype, retune against the configured player-lab charge
+  envelope and the shallow carry envelope separately. Presentation-time scaling
+  changes perceived speed only; it is not a mold-speed parameter.
+- When authoring a sniper hyzer-flip, specify the flip-distance landmark, the
+  flat-hold window, and the terminal range. Do not sacrifice the mold's stated
+  flat-turnover and anhyzer/roller lines to create the hyzer laser.
 - Define roller or skip intent separately from airborne identity. Ground outcome
   still depends on actual impact velocity, bank, angle, normal, surface, and
   configured mold factors.

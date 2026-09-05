@@ -34,6 +34,13 @@ launch-pitch rule override v2.
   it does not require adjacent states to be identical.
 - Keep bank and orientation continuous and readable as gameplay feedback. They
   need not result from rigid-body aerodynamic torque.
+- The current prototype may apply per-profile carry only while a shallow,
+  positive release is rising in powered flight. Keep that release envelope
+  explicit, return to full gravity after apex, and do not use carry to extend
+  high-angle lob releases.
+- A sniper-style mold may hold a positive hyzer release at flat during powered
+  flight. Preserve the initial release-bank context for that decision, and do
+  not apply the hold to flat or anhyzer releases that are meant to turn over.
 
 ## Determinism and boundaries
 

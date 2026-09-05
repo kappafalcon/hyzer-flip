@@ -20,6 +20,9 @@ unimplemented until code and tests establish them.
   time. Presentation transforms are projections of that state.
 - Use an accumulator or equivalent driver to execute fixed solver steps. Render
   frames and client physics-callback counts must not change the trajectory.
+- A lab may consume simulated time faster for presentation, provided it advances
+  the same complete fixed-step sequence and does not change launch data,
+  solver constants, collision ordering, or authoritative multiplayer timing.
 - Keep integration order explicit: advance an intended segment, query collision,
   resolve a deterministic response, then publish state to presentation and
   networking.

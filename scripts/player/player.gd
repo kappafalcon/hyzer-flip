@@ -1,6 +1,10 @@
 extends CharacterBody3D
 const PlayerReticleScript = preload("res://scripts/player/reticle.gd")
 signal arcade_throw_requested(command: ArcadeThrowCommand)
+signal arcade_throw_preview_requested(command: ArcadeThrowCommand)
+signal arcade_throw_preview_cleared
+
+const DEFAULT_RETICLE_PITCH_DEGREES := 10.0
 
 @export var move_speed: float = 6.0
 @export var mouse_sensitivity: float = 0.002
@@ -17,31 +21,51 @@ signal arcade_throw_requested(command: ArcadeThrowCommand)
 @onready var third_person_pivot: Node3D = $Cameras/ThirdPersonPivot
 @onready var power_indicator: ProgressBar = $UI/PowerIndicator
 @onready var release_angle_label: Label = $UI/ReleaseAngleLabel
+@onready var launch_angle_label: Label = $UI/LaunchAngleLabel
 
 @onready var throw_origin: Marker3D = ($Cameras/FirstPersonPivot/FirstPersonCamera/ThrowOrigin)
 
 var is_aiming := false
-var camera_pitch: float = 0.0
+var camera_pitch := deg_to_rad(DEFAULT_RETICLE_PITCH_DEGREES)
 var charge_started_at_msec := -1
 
 func _physics_process(_delta: float) -> void:
 	var move_input := _read_move_input()
 	_apply_movement(move_input)
+	var launch_pitch_degrees := clampf(
+		rad_to_deg(camera_pitch) + launch_pitch_offset_degrees,
+		-30.0,
+		30.0,
+	)
+	launch_angle_label.text = "Launch %+.1f°" % launch_pitch_degrees
+	var preview_charge := 0.0
 	if charge_started_at_msec >= 0:
 		var charge_elapsed_seconds := (
 			Time.get_ticks_msec() - charge_started_at_msec
 		) / 1000.0
-		power_indicator.value = clampf(
+		preview_charge = clampf(
 			charge_elapsed_seconds / charge_duration_seconds,
 			0.0,
 			1.0,
 		)
+		power_indicator.value = preview_charge
+	if is_aiming:
+		arcade_throw_preview_requested.emit(_create_arcade_throw_command(preview_charge))
 
 
 func _ready() -> void:
 	Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
+	first_person_pivot.rotation.x = camera_pitch
 
 func _request_arcade_throw(charge: float) -> void:
+	var command := _create_arcade_throw_command(charge)
+	if not command.is_valid():
+		push_error("Player rejected invalid arcade throw command.")
+		return
+	arcade_throw_requested.emit(command)
+
+
+func _create_arcade_throw_command(charge: float) -> ArcadeThrowCommand:
 	var camera_forward := -first_person_camera.global_transform.basis.z
 	var horizontal_forward := Vector3(
 		camera_forward.x,
@@ -52,7 +76,7 @@ func _request_arcade_throw(charge: float) -> void:
 		asin(clampf(camera_forward.y, -1.0, 1.0))
 	)
 
-	var command := ArcadeThrowCommand.new(
+	return ArcadeThrowCommand.new(
 		throw_origin.global_position,
 		horizontal_forward,
 		charge,
@@ -64,10 +88,6 @@ func _request_arcade_throw(charge: float) -> void:
 		),
 		ArcadeThrowCommand.FadeDirection.NATURAL_FINISH_LEFT,
 	)
-	if not command.is_valid():
-		push_error("Player rejected invalid arcade throw command.")
-		return
-	arcade_throw_requested.emit(command)
 
 func _read_move_input() -> Vector2:
 	return Input.get_vector(
@@ -165,3 +185,4 @@ func _cancel_charge() -> void:
 	charge_started_at_msec = -1
 	power_indicator.value = 0.0
 	power_indicator.hide()
+	arcade_throw_preview_cleared.emit()

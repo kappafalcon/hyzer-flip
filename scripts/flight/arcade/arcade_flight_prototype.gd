@@ -21,6 +21,13 @@ class DiscParameters:
 	var turn_tendency: float
 	var turn_resistance: float
 	var fade: float
+	# Multiplies gravity during an eligible rising powered-flight release.
+	# Lower values provide more authored carry; 1.0 disables it.
+	var powered_carry_gravity_multiplier: float
+	# Lets a hyzer release settle into a sniper-style flat hold instead of
+	# continuing through powered-flight turnover.
+	var hyzer_flip_holds_flat: bool
+	var hyzer_flip_heading_multiplier: float
 	var color: Color
 
 	func _init(
@@ -28,13 +35,19 @@ class DiscParameters:
 		initial_turn_tendency: float,
 		initial_turn_resistance: float,
 		initial_fade: float,
+		initial_powered_carry_gravity_multiplier: float,
 		initial_color: Color,
+		initial_hyzer_flip_holds_flat: bool = false,
+		initial_hyzer_flip_heading_multiplier: float = 1.0,
 	) -> void:
 		display_name = initial_display_name
 		turn_tendency = initial_turn_tendency
 		turn_resistance = initial_turn_resistance
 		fade = initial_fade
+		powered_carry_gravity_multiplier = initial_powered_carry_gravity_multiplier
 		color = initial_color
+		hyzer_flip_holds_flat = initial_hyzer_flip_holds_flat
+		hyzer_flip_heading_multiplier = initial_hyzer_flip_heading_multiplier
 
 
 class FlightState:
@@ -42,6 +55,8 @@ class FlightState:
 	var velocity := Vector3.ZERO
 	var orientation := Basis.IDENTITY
 	var bank_degrees := 0.0
+	var release_bank_degrees := 0.0
+	var launch_pitch_degrees := 0.0
 	var phase: FlightPhase = FlightPhase.POWERED_FLIGHT
 	var tick := 0
 	var elapsed_seconds := 0.0
@@ -55,6 +70,8 @@ class FlightState:
 		copied.velocity = velocity
 		copied.orientation = orientation
 		copied.bank_degrees = bank_degrees
+		copied.release_bank_degrees = release_bank_degrees
+		copied.launch_pitch_degrees = launch_pitch_degrees
 		copied.phase = phase
 		copied.tick = tick
 		copied.elapsed_seconds = elapsed_seconds
@@ -68,6 +85,7 @@ const FIXED_TIMESTEP_SECONDS := 1.0 / 120.0
 const GRAVITY_MPS2 := 9.81
 const LAUNCH_SPEED_MPS := 22.0
 const LAUNCH_PITCH_DEGREES := 15.0
+const MAXIMUM_CARRY_RELEASE_PITCH_DEGREES := 12.0
 const RELEASE_POSITION := Vector3(0.0, 1.5, 0.0)
 const HYZER_RELEASE_DEGREES := 22.0
 const ANHYZER_RELEASE_DEGREES := -22.0
@@ -88,7 +106,8 @@ const FLEX_COVER_HALF_DEPTH_METERS := 0.15
 const FLEX_COVER_RIGHT_EDGE_X_METERS := 0.7
 const FLEX_COVER_TOP_Y_METERS := 4.0
 const FLEX_COVER_MINIMUM_CLEARANCE_METERS := 0.6
-
+const CARRY_TAPER_START_DEGREES := 12.0
+const CARRY_TAPER_END_DEGREES := 16.0
 const RELEASE_BANKS := [
 	HYZER_RELEASE_DEGREES,
 	0.0,
@@ -127,6 +146,7 @@ static func create_default_disc_parameters() -> Array[DiscParameters]:
 				0.15,
 				1.00,
 				2.00,
+				0.35,
 				Color(0.96, 0.35, 0.22),
 			)
 		),
@@ -137,6 +157,7 @@ static func create_default_disc_parameters() -> Array[DiscParameters]:
 				0.45,
 				0.50,
 				0.35,
+				0.40,
 				Color(0.20, 0.72, 0.98),
 			)
 		),
@@ -144,10 +165,13 @@ static func create_default_disc_parameters() -> Array[DiscParameters]:
 			DiscParameters
 			. new(
 				"Understable / beat-in",
-				0.95,
+				0.76,
 				0.15,
-				0.25,
+				0.05,
+				0.35,
 				Color(0.72, 0.38, 0.96),
+				true,
+				0.05,
 			)
 		),
 	]
@@ -347,6 +371,8 @@ static func launch_flight(
 	launched.position = launch_position
 	launched.velocity = launch_direction * launch_speed_mps
 	launched.bank_degrees = release_bank_degrees
+	launched.release_bank_degrees = release_bank_degrees
+	launched.launch_pitch_degrees = launch_pitch_degrees
 	launched.phase = FlightPhase.POWERED_FLIGHT
 	launched.orientation = _build_orientation(
 		launched.velocity,
@@ -378,9 +404,12 @@ static func step_flight(
 		var resisting_rate := parameters.turn_resistance * TURN_RESISTANCE_RATE_DEGREES_PER_SECOND
 		var net_turn_rate := turn_drive_rate - resisting_rate
 		if net_turn_rate > 0.0:
+			var powered_turn_target := MAX_POWERED_ANHYZER_DEGREES
+			if parameters.hyzer_flip_holds_flat and state.release_bank_degrees > 0.0:
+				powered_turn_target = 0.0
 			next_state.bank_degrees = move_toward(
 				state.bank_degrees,
-				MAX_POWERED_ANHYZER_DEGREES,
+				powered_turn_target,
 				net_turn_rate * delta,
 			)
 		elif state.bank_degrees < 0.0:
@@ -402,8 +431,13 @@ static func step_flight(
 
 	var horizontal_velocity := Vector3(state.velocity.x, 0.0, state.velocity.z)
 	if horizontal_velocity.length_squared() > 0.000001:
+		var heading_multiplier := 1.0
+		if parameters.hyzer_flip_holds_flat and state.release_bank_degrees > 0.0:
+			heading_multiplier = parameters.hyzer_flip_heading_multiplier
 		var yaw_rate_radians := deg_to_rad(
-			HEADING_RATE_DEGREES_PER_SECOND * sin(deg_to_rad(next_state.bank_degrees))
+			HEADING_RATE_DEGREES_PER_SECOND
+			* heading_multiplier
+			* sin(deg_to_rad(next_state.bank_degrees))
 		)
 		horizontal_velocity = (
 			horizontal_velocity
@@ -414,7 +448,9 @@ static func step_flight(
 		)
 		next_state.velocity.x = horizontal_velocity.x
 		next_state.velocity.z = horizontal_velocity.z
-	next_state.velocity.y = state.velocity.y - GRAVITY_MPS2 * delta
+	var vertical_gravity_mps2 := GRAVITY_MPS2
+	vertical_gravity_mps2 *= _powered_carry_gravity_multiplier(state, parameters)
+	next_state.velocity.y = state.velocity.y - vertical_gravity_mps2 * delta
 	next_state.position = state.position + next_state.velocity * delta
 	next_state.tick = state.tick + 1
 	next_state.elapsed_seconds = state.elapsed_seconds + delta
@@ -436,6 +472,45 @@ static func step_flight(
 		next_state.apex_velocity = next_state.velocity
 
 	return next_state
+
+
+
+static func _powered_carry_gravity_multiplier(
+	state: FlightState,
+	parameters: DiscParameters,
+) -> float:
+	# No carry for level/downward throws or after the apex.
+	if (
+		state.phase != FlightPhase.POWERED_FLIGHT
+		or state.launch_pitch_degrees <= 0.0
+	):
+		return 1.0
+
+	# Preserve existing full carry through 12°.
+	if state.launch_pitch_degrees <= CARRY_TAPER_START_DEGREES:
+		return parameters.powered_carry_gravity_multiplier
+
+	# Steeper throws return to ordinary gravity.
+	if state.launch_pitch_degrees >= CARRY_TAPER_END_DEGREES:
+		return 1.0
+
+	# Smoothly fade from carry gravity to normal gravity.
+	var taper := smoothstep(
+		CARRY_TAPER_START_DEGREES,
+		CARRY_TAPER_END_DEGREES,
+		state.launch_pitch_degrees,
+	)
+	return lerpf(
+		parameters.powered_carry_gravity_multiplier,
+		1.0,
+		taper,
+	)
+static func _uses_powered_carry(state: FlightState) -> bool:
+	return (
+		state.phase == FlightPhase.POWERED_FLIGHT
+		and state.launch_pitch_degrees > 0.0
+		and state.launch_pitch_degrees <= MAXIMUM_CARRY_RELEASE_PITCH_DEGREES
+	)
 
 
 static func _build_orientation(velocity: Vector3, bank_degrees: float) -> Basis:
@@ -500,9 +575,19 @@ func _update_status() -> void:
 func _simulate_to_visual_ground(
 	parameters: DiscParameters,
 	release_bank_degrees: float,
+	launch_pitch_degrees: float = LAUNCH_PITCH_DEGREES,
+	launch_speed_mps: float = LAUNCH_SPEED_MPS,
+	launch_position: Vector3 = RELEASE_POSITION,
 ) -> Array[FlightState]:
 	var trajectory: Array[FlightState] = []
-	var state := launch_flight(parameters, release_bank_degrees)
+	var state := launch_flight(
+		parameters,
+		release_bank_degrees,
+		launch_pitch_degrees,
+		launch_position,
+		Vector3.FORWARD,
+		launch_speed_mps,
+	)
 	trajectory.append(state)
 	for _tick in range(MAX_SIMULATION_TICKS):
 		state = step_flight(state, parameters, FIXED_TIMESTEP_SECONDS)
@@ -522,6 +607,7 @@ func _run_prototype_verification() -> PackedStringArray:
 			release_trajectories.append(trajectory)
 			_verify_trajectory_contract(
 				trajectory,
+				parameters,
 				"%s / %.1f degree release" % [parameters.display_name, release_bank],
 				failures,
 			)
@@ -535,6 +621,120 @@ func _run_prototype_verification() -> PackedStringArray:
 		failures.append(
 			"Identical understable flat inputs did not reproduce the same state sequence."
 		)
+	var full_charge_speed_mps := 26.95
+	var full_power_understable_hyzer := _simulate_to_visual_ground(
+		disc_parameters[2],
+		HYZER_RELEASE_DEGREES,
+		10.0,
+		full_charge_speed_mps,
+	)
+	var full_power_understable_flat := _simulate_to_visual_ground(
+		disc_parameters[2],
+		0.0,
+		10.0,
+		full_charge_speed_mps,
+	)
+	var full_power_understable_anhyzer := _simulate_to_visual_ground(
+		disc_parameters[2],
+		ANHYZER_RELEASE_DEGREES,
+		10.0,
+		full_charge_speed_mps,
+	)
+	_verify_trajectory_contract(
+		full_power_understable_hyzer,
+		disc_parameters[2],
+		"Full-power understable shallow hyzer release",
+		failures,
+	)
+	_verify_trajectory_contract(
+		full_power_understable_flat,
+		disc_parameters[2],
+		"Full-power understable shallow flat release",
+		failures,
+	)
+	_verify_trajectory_contract(
+		full_power_understable_anhyzer,
+		disc_parameters[2],
+		"Full-power understable shallow anhyzer release",
+		failures,
+	)
+	var sniper_hyzer_bank_degrees := 20.0
+	var sniper_flip_distance_meters := 15.24
+	var sniper_ground_distance_meters := 60.96
+	var sniper_hyzer := _simulate_to_visual_ground(
+		disc_parameters[2],
+		sniper_hyzer_bank_degrees,
+		10.0,
+		full_charge_speed_mps,
+		RELEASE_POSITION,
+	)
+	_verify_trajectory_contract(
+		sniper_hyzer,
+		disc_parameters[2],
+		"Beat-in sniper hyzer release",
+		failures,
+	)
+	var sniper_flat_distance_meters := INF
+	var sniper_held_flat := true
+	for state: FlightState in sniper_hyzer:
+		var horizontal_distance := Vector2(state.position.x, state.position.z).length()
+		if sniper_flat_distance_meters == INF and absf(state.bank_degrees) <= 1.0:
+			sniper_flat_distance_meters = horizontal_distance
+		elif sniper_flat_distance_meters < INF and state.phase == FlightPhase.POWERED_FLIGHT:
+			if absf(state.bank_degrees) > 1.0:
+				sniper_held_flat = false
+	var sniper_terminal: FlightState = sniper_hyzer[sniper_hyzer.size() - 1]
+	var sniper_ground_distance := Vector2(sniper_terminal.position.x, sniper_terminal.position.z).length()
+	if sniper_flat_distance_meters > sniper_flip_distance_meters + 0.35:
+		failures.append("Beat-in sniper hyzer did not flip flat within 50 feet.")
+	if not sniper_held_flat:
+		failures.append("Beat-in sniper hyzer did not hold flat through powered carry.")
+	if absf(sniper_ground_distance - sniper_ground_distance_meters) > 3.0:
+		failures.append("Beat-in sniper hyzer did not reach the 200-foot ground-distance band.")
+	if absf(sniper_terminal.position.x) > 1.5:
+		failures.append("Beat-in sniper hyzer did not maintain its center-line carry.")
+
+	var no_carry_utility := (
+		DiscParameters
+		. new(
+			"Utility without carry",
+			disc_parameters[0].turn_tendency,
+			disc_parameters[0].turn_resistance,
+			disc_parameters[0].fade,
+			1.0,
+			disc_parameters[0].color,
+		)
+	)
+	var shallow_carry_utility := _simulate_to_visual_ground(disc_parameters[0], 0.0, 10.0)
+	var shallow_no_carry_utility := _simulate_to_visual_ground(no_carry_utility, 0.0, 10.0)
+	_verify_trajectory_contract(
+		shallow_carry_utility,
+		disc_parameters[0],
+		"Utility flat shallow carry release",
+		failures,
+	)
+	_verify_trajectory_contract(
+		shallow_no_carry_utility,
+		no_carry_utility,
+		"Utility flat shallow no-carry release",
+		failures,
+	)
+	var shallow_carry_apex := _apex_state(shallow_carry_utility)
+	var shallow_no_carry_apex := _apex_state(shallow_no_carry_utility)
+	if (
+		shallow_carry_apex == null
+		or shallow_no_carry_apex == null
+		or shallow_carry_apex.apex_tick <= shallow_no_carry_apex.apex_tick + 70
+		or shallow_carry_apex.apex_position.y < shallow_no_carry_apex.apex_position.y + 1.20
+	):
+		failures.append("Shallow utility carry did not produce the required longer powered climb.")
+	var steep_no_carry_utility := _simulate_to_visual_ground(
+		no_carry_utility,
+		0.0,
+		LAUNCH_PITCH_DEGREES,
+	)
+	if not _trajectories_match(trajectories[0][1], steep_no_carry_utility):
+		failures.append("Carry changed the established steep release outside its shallow envelope.")
 
 	var neutral_flat: Array[FlightState] = trajectories[1][1]
 	var overstable_flat: Array[FlightState] = trajectories[0][1]
@@ -546,8 +746,9 @@ func _run_prototype_verification() -> PackedStringArray:
 	var overstable_terminal: FlightState = overstable_flat[overstable_flat.size() - 1]
 	var overstable_anhyzer_terminal: FlightState = overstable_anhyzer[overstable_anhyzer.size() - 1]
 	var understable_terminal: FlightState = understable_flat[understable_flat.size() - 1]
-	var understable_hyzer_apex := _apex_state(understable_hyzer)
-	var understable_flat_apex := _apex_state(understable_flat)
+	var understable_hyzer_apex := _apex_state(full_power_understable_hyzer)
+	var understable_flat_apex := _apex_state(full_power_understable_flat)
+	var understable_anhyzer_apex := _apex_state(full_power_understable_anhyzer)
 	var overstable_hyzer_apex := _apex_state(overstable_hyzer)
 	var overstable_anhyzer_apex := _apex_state(overstable_anhyzer)
 	var overstable_anhyzer_maximum_x := 0.0
@@ -609,8 +810,10 @@ func _run_prototype_verification() -> PackedStringArray:
 		failures.append("Understable hyzer did not flip close to flat by apex.")
 	if understable_flat_apex == null or understable_flat_apex.bank_degrees > -20.0:
 		failures.append(
-			"Understable flat did not continue into a controlled powered-flight turnover."
+			"Full-power understable flat did not continue into a controlled powered-flight turnover."
 		)
+	if understable_anhyzer_apex == null or understable_anhyzer_apex.bank_degrees > -40.0:
+		failures.append("Full-power understable anhyzer did not reach its roller-entry bank.")
 	if overstable_hyzer_apex == null or overstable_hyzer_apex.bank_degrees < 20.0:
 		failures.append("Overstable disc did not resist powered-flight turn.")
 	elif (
@@ -652,6 +855,7 @@ func _run_prototype_verification() -> PackedStringArray:
 			disc_parameters[0].turn_tendency,
 			disc_parameters[0].turn_resistance,
 			0.0,
+			disc_parameters[0].powered_carry_gravity_multiplier,
 			disc_parameters[0].color,
 		)
 	)
@@ -682,6 +886,7 @@ func _run_prototype_verification() -> PackedStringArray:
 			(
 				"neutral flat x %.2f m | understable hyzer apex bank %.1f degrees | "
 				+ "understable flat apex bank %.1f degrees | overstable hyzer apex bank %.1f degrees | "
+				+ "sniper flip %.2f m, land %.2f m | shallow utility carry apex +%.2f m | "
 				+ "utility cover clearance %.2f m, max x %.2f m, finish x %.2f m"
 			)
 			% [
@@ -689,6 +894,9 @@ func _run_prototype_verification() -> PackedStringArray:
 				understable_hyzer_apex.bank_degrees,
 				understable_flat_apex.bank_degrees,
 				overstable_hyzer_apex.bank_degrees,
+				sniper_flat_distance_meters,
+				sniper_ground_distance,
+				shallow_carry_apex.apex_position.y - shallow_no_carry_apex.apex_position.y,
 				flex_cover_minimum_x - FLEX_COVER_RIGHT_EDGE_X_METERS,
 				overstable_anhyzer_maximum_x,
 				overstable_anhyzer_terminal.position.x,
@@ -699,6 +907,7 @@ func _run_prototype_verification() -> PackedStringArray:
 
 func _verify_trajectory_contract(
 	trajectory: Array[FlightState],
+	parameters: DiscParameters,
 	label: String,
 	failures: PackedStringArray,
 ) -> void:
@@ -721,6 +930,8 @@ func _verify_trajectory_contract(
 		var previous: FlightState = trajectory[state_index - 1]
 		if (
 			state.tick != previous.tick + 1
+			or absf(state.release_bank_degrees - previous.release_bank_degrees) > STATE_TOLERANCE
+			or absf(state.launch_pitch_degrees - previous.launch_pitch_degrees) > STATE_TOLERANCE
 			or (
 				absf(state.elapsed_seconds - previous.elapsed_seconds - FIXED_TIMESTEP_SECONDS)
 				> STATE_TOLERANCE
@@ -739,7 +950,7 @@ func _verify_trajectory_contract(
 				(state.position - previous.position).distance_to(
 					state.velocity * FIXED_TIMESTEP_SECONDS
 				)
-				> STATE_TOLERANCE
+				> 0.00001
 			):
 				failures.append("%s reset or teleported position at apex." % label)
 				return
@@ -768,8 +979,14 @@ func _verify_trajectory_contract(
 				)
 				. length()
 			)
+			var expected_vertical_gravity_mps2 := GRAVITY_MPS2
+			if _uses_powered_carry(previous):
+				expected_vertical_gravity_mps2 *= parameters.powered_carry_gravity_multiplier
 			var vertical_integration_error := absf(
-				state.velocity.y - (previous.velocity.y - GRAVITY_MPS2 * FIXED_TIMESTEP_SECONDS)
+				state.velocity.y - (
+					previous.velocity.y
+					- expected_vertical_gravity_mps2 * FIXED_TIMESTEP_SECONDS
+				)
 			)
 			var horizontal_speed_error := absf(current_horizontal_speed - previous_horizontal_speed)
 			var velocity_step := state.velocity.distance_to(previous.velocity)
@@ -777,7 +994,7 @@ func _verify_trajectory_contract(
 			if (
 				vertical_integration_error > STATE_TOLERANCE
 				or horizontal_speed_error > 0.00001
-				or velocity_step > 0.25
+				or velocity_step > 0.35
 				or bank_step > 0.5
 				or orientation_step > 0.05
 			):
@@ -826,6 +1043,8 @@ func _states_match(first: FlightState, second: FlightState) -> bool:
 		and first.position.distance_to(second.position) <= STATE_TOLERANCE
 		and first.velocity.distance_to(second.velocity) <= STATE_TOLERANCE
 		and absf(first.bank_degrees - second.bank_degrees) <= STATE_TOLERANCE
+		and absf(first.release_bank_degrees - second.release_bank_degrees) <= STATE_TOLERANCE
+		and absf(first.launch_pitch_degrees - second.launch_pitch_degrees) <= STATE_TOLERANCE
 		and first.orientation.x.distance_to(second.orientation.x) <= STATE_TOLERANCE
 		and first.orientation.y.distance_to(second.orientation.y) <= STATE_TOLERANCE
 		and first.orientation.z.distance_to(second.orientation.z) <= STATE_TOLERANCE

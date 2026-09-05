@@ -21,9 +21,9 @@ Discs are physical projectiles, never hitscan attacks.
 ### Arcade flight policy
 
 Arena throws use deterministic, disc-golf-inspired trajectories rather than
-literal field-distance simulation. The current flight-lab calibration keeps
-full-charge throws under 100 ft; future combat-range expansion must be an
-intentional balance change. Throws must not become reliable moving-target
+literal field-distance simulation. The current flight lab is intentionally
+exploring a longer 17.05–26.95 m/s charge envelope; its final combat-range
+limits remain a balance decision. Throws must not become reliable moving-target
 attacks.
 
 Flight identity remains legible across release angles. The utility driver must

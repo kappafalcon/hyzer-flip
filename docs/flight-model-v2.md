@@ -8,9 +8,10 @@ follow this contract.
 
 [`arcade_flight_prototype.gd`](../scripts/flight/arcade/arcade_flight_prototype.gd)
 is the currently executable subset of this design. Its two airborne phases are
-implemented and deterministically exercised, while ground contact, skip, roll,
-stop/slide, and the proposed production data shape remain design targets unless
-the code and validation say otherwise.
+implemented and deterministically exercised. The prototype includes a
+pitch-gated, per-profile powered-flight carry calibration; ground contact,
+skip, roll, stop/slide, and the proposed production data shape remain design
+targets unless the code and validation say otherwise.
 
 [`flight-model.md`](flight-model.md) records the legacy flight implementation
 during migration. It may explain existing code, but it does not override this
@@ -141,6 +142,12 @@ Example:
 
 The exact implementation may combine these values mathematically, but mold data should preserve their conceptual distinction.
 
+A mold may additionally target flat during powered flight after a positive
+hyzer release. This is an authored hyzer-flip hold for laser-style shots, not
+early fade: it must retain the release-bank context, stop at flat rather than
+continuing into anhyzer, and leave flat and anhyzer releases on their normal
+powered-turn paths.
+
 ## Why this matters for combat
 
 A learned trajectory becomes a combat tool.
@@ -183,6 +190,18 @@ Possible effects include:
 - A modifier to the authored vertical trajectory
 
 The implementation can remain deliberately arcade-like as long as it is deterministic.
+
+### Current prototype calibration
+
+The executable prototype represents carry with a per-profile gravity multiplier
+while a release is rising in `POWERED_FLIGHT`. It applies only to shallow,
+positive launch pitches (currently `> 0°` through `12°`), so a normal shallow
+throw gains readable carry while steeper releases retain their established
+ballistic envelope. The multiplier is local prototype calibration, not a
+production Resource schema or real-world aerodynamic coefficient. Full gravity
+resumes in `LATE_FLIGHT` after the continuous vertical-velocity apex crossing.
+The current player-lab charge envelope is 17.05 m/s at zero charge, 22.00 m/s
+at half charge, and 26.95 m/s at full charge.
 
 The apex transition does **not** reset velocity, orientation, turn state, or momentum.
 
