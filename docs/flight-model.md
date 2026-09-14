@@ -68,13 +68,19 @@ explicit collision or lifecycle result must do that.
 
 Heading curvature is a bounded steering impulse. The current solver scales it
 by the squared remaining phase, so hard-fading or lofted discs cannot continue
-turning until they boomerang back toward release after phase completion. Bank
-continues to orient the disc toward its turn/fade side and reduces vertical
-glide support by its cosine. A profile can additionally author a banked descent
-acceleration; it scales with bank magnitude to pull a spike-fading mold toward
-the ground after its apex without changing its unbanked launch. Positive launch
-pitch strengthens that banked descent, so an uphill hyzer can form an arc before
-falling through its late fade rather than drifting sideways in the sky.
+turning until they boomerang back toward release after phase completion. For an
+ascending release, the commanded bank is presentation-only: it settles toward
+flat without lateral steering or banked descent. This lets a flippy disc
+hyzer-flip in its initial climb and prevents release hyzer from causing an
+early fade. Once vertical velocity reaches zero or below at the apex, the
+profile's phase bank bias and launch-pitch stability resume, applying turn or
+fade for the descent. Bank continues to orient the disc toward its turn/fade
+side and reduces vertical glide support by its cosine. A profile can
+additionally author a banked descent acceleration; it scales with bank
+magnitude to pull a spike-fading mold toward the ground after its apex without
+changing its unbanked launch. Positive launch pitch strengthens that banked
+descent, so an uphill hyzer can form an arc before falling through its late fade
+rather than drifting sideways in the sky.
 
 ## Collision boundary and limitations
 

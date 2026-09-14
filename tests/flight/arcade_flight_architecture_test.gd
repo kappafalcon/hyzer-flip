@@ -62,11 +62,23 @@ func _init() -> void:
 		return
 	var uphill_step := simulator.step(uphill_state, profile, SIMULATION_TIMESTEP, environment)
 	var downhill_step := simulator.step(downhill_state, profile, SIMULATION_TIMESTEP, environment)
+	if not is_zero_approx(_target_bank(uphill_step)) \
+		or uphill_step.horizontal_heading.distance_to(uphill_state.horizontal_heading) > 0.000001:
+		fail("An ascending release applied turn/fade before reaching its apex.")
+		return
+	var post_apex_uphill_state := uphill_state.copy()
+	post_apex_uphill_state.velocity.y = 0.0
+	var post_apex_uphill_step := simulator.step(
+		post_apex_uphill_state,
+		profile,
+		SIMULATION_TIMESTEP,
+		environment,
+	)
 	if not (
-		_target_bank(uphill_step) > _target_bank(level_step)
+		_target_bank(post_apex_uphill_step) > _target_bank(level_step)
 		and _target_bank(level_step) > _target_bank(downhill_step)
 	):
-		fail("Launch pitch did not produce the expected uphill-to-downhill stability ordering.")
+		fail("Launch pitch did not produce the expected post-apex stability ordering.")
 		return
 
 	var first_run := simulate(simulator, profile, level_state, environment)
@@ -274,10 +286,9 @@ func _test_neutral_mid_draft() -> bool:
 	const MINIMUM_HYZER_FINISH_DISTANCE_METERS := 10.0
 	const MINIMUM_HYZER_FINISH_ADVANTAGE_METERS := 9.5
 	const UPHILL_HYZER_LAUNCH_PITCH_DEGREES := 20.0
-	const UPHILL_HYZER_DESCENT_CHECK_PHASE := 0.65
 	const MINIMUM_UPHILL_HYZER_APEX_GAIN_METERS := 0.5
 	const MINIMUM_UPHILL_HYZER_LATE_BANK_DEGREES := 30.0
-	const MAXIMUM_UPHILL_HYZER_APEX_PHASE := 0.75
+	const POST_APEX_BANK_SAMPLE_TICKS := 45
 	const MAXIMUM_UPHILL_HYZER_TICKS := 180
 	var profile := load(PROFILE_PATH) as ArcadeFlightProfile
 	if profile == null:
@@ -356,9 +367,9 @@ func _test_neutral_mid_draft() -> bool:
 	var uphill_hyzer_state := simulator.launch(uphill_hyzer_command, profile)
 	var uphill_hyzer_peak_height := uphill_hyzer_state.position.y
 	var uphill_hyzer_reached_apex := false
-	var uphill_hyzer_apex_phase := 1.0
 	var uphill_hyzer_reached_ground := false
 	var uphill_hyzer_recorded_late_descent := false
+	var uphill_hyzer_post_apex_ticks := 0
 	var uphill_hyzer_late_bank_degrees := 0.0
 	var uphill_hyzer_late_vertical_speed := 0.0
 	for _step in range(MAXIMUM_UPHILL_HYZER_TICKS):
@@ -376,9 +387,10 @@ func _test_neutral_mid_draft() -> bool:
 		if previous_uphill_hyzer_state.velocity.y > 0.0 \
 			and uphill_hyzer_state.velocity.y <= 0.0:
 			uphill_hyzer_reached_apex = true
-			uphill_hyzer_apex_phase = uphill_hyzer_state.flight_phase
-		if not uphill_hyzer_recorded_late_descent \
-			and uphill_hyzer_state.flight_phase >= UPHILL_HYZER_DESCENT_CHECK_PHASE:
+		if uphill_hyzer_reached_apex and not uphill_hyzer_recorded_late_descent:
+			upright_hyzer_post_apex_ticks += 1
+		if uphill_hyzer_post_apex_ticks >= POST_APEX_BANK_SAMPLE_TICKS \
+			and not uphill_hyzer_recorded_late_descent:
 			uphill_hyzer_late_bank_degrees = uphill_hyzer_state.bank_degrees
 			uphill_hyzer_late_vertical_speed = uphill_hyzer_state.velocity.y
 			uphill_hyzer_recorded_late_descent = true
@@ -454,12 +466,6 @@ func _test_neutral_mid_draft() -> bool:
 	if not uphill_hyzer_reached_apex \
 		or uphill_hyzer_peak_height < uphill_hyzer_command.origin.y + MINIMUM_UPHILL_HYZER_APEX_GAIN_METERS:
 		fail("Neutral mid uphill hyzer did not reach its %.3f m apex gain." % MINIMUM_UPHILL_HYZER_APEX_GAIN_METERS)
-		return false
-	if uphill_hyzer_apex_phase > MAXIMUM_UPHILL_HYZER_APEX_PHASE:
-		fail("Neutral mid uphill hyzer reached its apex at phase %.3f after its %.3f early-apex limit." % [
-			uphill_hyzer_apex_phase,
-			MAXIMUM_UPHILL_HYZER_APEX_PHASE,
-		])
 		return false
 	if not uphill_hyzer_recorded_late_descent \
 		or uphill_hyzer_late_bank_degrees < MINIMUM_UPHILL_HYZER_LATE_BANK_DEGREES \

@@ -20,7 +20,7 @@ Resources remain immutable configuration.
 | --- | --- | --- | --- |
 | Neutral mid | `neutral_mid_arcade_draft.tres` | Flat opening stays straight into a late bite; an uphill hyzer rolls early into a weighted descent; anhyzer settles toward flat | TBD |
 | Utility driver | `utility_driver_arcade_draft.tres` | Straight through apex, hyzer-amplified progressive spike-fade corner, flex-to-flat | Skip, damage, AOE, and bounce limits are TBD |
-| Beat-in distance driver | `beat_in_distance_driver_arcade_draft.tres` | Maximum-power hyzer-flip laser, turning-S, roller entry | Projectile contact behavior is TBD |
+| Beat-in distance driver | `beat_in_distance_driver_arcade_draft.tres` | Full-charge +10° / 20° hyzer flips flat within 50 ft and center-line carries to roughly 200 ft; flat release turns over; anhyzer reaches roller-entry bank | Projectile contact behavior is TBD |
 
 For left-fading throws, overstable finish is left and understable turn is right.
 Right-fading throws mirror those results.

@@ -42,7 +42,9 @@ func launch(
 	state.launch_pitch_stability_bias_degrees = profile.sample_launch_pitch_stability_bias(
 		command.launch_pitch_degrees
 	)
-	state.target_bank_degrees = _calculate_target_bank_degrees(state, profile)
+	# Preserve the commanded release angle for presentation. The solver then
+	# works it toward flat while the disc is still climbing.
+	state.target_bank_degrees = command.release_bank_degrees * command.get_fade_sign()
 	state.bank_degrees = state.target_bank_degrees
 	state.orientation = _build_orientation(
 		initial_velocity,
@@ -93,13 +95,22 @@ func step_into(
 	next_state.launch_pitch_stability_bias_degrees = profile.sample_launch_pitch_stability_bias(
 		state.launch_pitch_degrees
 	)
-	next_state.target_bank_degrees = _calculate_target_bank_degrees(next_state, profile)
+	var is_before_apex := state.velocity.y > 0.0
+	# An ascending release retains its commanded bank only as a presentation
+	# angle. It flips toward flat before the profile's turn/fade can steer it.
+	next_state.target_bank_degrees = (
+		0.0 if is_before_apex else _calculate_target_bank_degrees(next_state, profile)
+	)
 	next_state.bank_degrees = move_toward(
 		state.bank_degrees,
 		next_state.target_bank_degrees,
 		profile.bank_response_degrees_per_second * delta,
 	)
-	next_state.horizontal_heading = _advance_heading(next_state, profile, delta)
+	next_state.horizontal_heading = (
+		state.horizontal_heading
+		if is_before_apex
+		else _advance_heading(next_state, profile, delta)
+	)
 
 	var speed := (
 		next_state.initial_forward_speed_mps
@@ -110,14 +121,16 @@ func step_into(
 		* profile.sample_charge_glide_multiplier(next_state.charge)
 		* cos(deg_to_rad(absf(next_state.bank_degrees)))
 	)
-	var banked_descent_acceleration := (
-		profile.banked_descent_acceleration_mps2
-		* sin(deg_to_rad(absf(next_state.bank_degrees)))
-		* (
-			1.0 + maxf(state.launch_pitch_degrees, 0.0)
-			/ profile.maximum_launch_pitch_degrees
+	var banked_descent_acceleration := 0.0
+	if not is_before_apex:
+		banked_descent_acceleration = (
+			profile.banked_descent_acceleration_mps2
+			* sin(deg_to_rad(absf(next_state.bank_degrees)))
+			* (
+				1.0 + maxf(state.launch_pitch_degrees, 0.0)
+				/ profile.maximum_launch_pitch_degrees
+			)
 		)
-	)
 	var vertical_speed := state.velocity.y + (
 		glide_acceleration - environment.gravity_mps2 - banked_descent_acceleration
 	) * delta

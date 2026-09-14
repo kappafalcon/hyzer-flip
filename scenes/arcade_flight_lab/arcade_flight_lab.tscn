@@ -6,7 +6,7 @@
 [ext_resource type="Resource" uid="uid://cigws6v1ymdap" path="res://data/discs/utility_driver_arcade_draft.tres" id="3_utility_profile"]
 [ext_resource type="Resource" uid="uid://7hb578bchs4o" path="res://data/discs/beat_in_distance_driver_arcade_draft.tres" id="4_beat_in_profile"]
 [ext_resource type="PackedScene" uid="uid://cqg2houx8ebvp" path="res://scenes/player/player.tscn" id="5_player"]
-[ext_resource type="PackedScene" path="res://scenes/ui/arcade_flight_lab_hud.tscn" id="6_hud"]
+[ext_resource type="PackedScene" uid="uid://defe6a0st7oka" path="res://scenes/ui/arcade_flight_lab_hud.tscn" id="6_hud"]
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_ground"]
 albedo_color = Color(0.08, 0.22, 0.12, 1)
@@ -113,7 +113,3 @@ fov = 50.0
 [node name="Player" parent="." unique_id=1619161411 instance=ExtResource("5_player")]
 
 [node name="UI" parent="." unique_id=595942660 instance=ExtResource("6_hud")]
-
-[connection signal="item_selected" from="UI/ControlsPanel/Controls/ProfileSelect" to="." method="_on_profile_select_item_selected"]
-[connection signal="pressed" from="UI/ControlsPanel/Controls/ThrowButton" to="." method="_on_throw_button_pressed"]
-[connection signal="pressed" from="UI/ControlsPanel/Controls/ResetButton" to="." method="_on_reset_button_pressed"]

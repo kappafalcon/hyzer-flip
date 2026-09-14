@@ -1,0 +1,154 @@
+[gd_scene load_steps=12 format=3]
+
+[ext_resource type="Script" uid="uid://dw75h2rqm87ei" path="res://scripts/labs/arcade_flight_v2_player_lab.gd" id="1_script"]
+[ext_resource type="PackedScene" uid="uid://cqg2houx8ebvp" path="res://scenes/player/player.tscn" id="2_player"]
+[ext_resource type="PackedScene" uid="uid://defe6a0st7oka" path="res://scenes/ui/arcade_flight_lab_hud.tscn" id="3_hud"]
+
+[sub_resource type="StandardMaterial3D" id="Material_ground"]
+albedo_color = Color(0.055, 0.14, 0.095, 1)
+roughness = 0.92
+
+[sub_resource type="PlaneMesh" id="Mesh_ground"]
+material = SubResource("Material_ground")
+size = Vector2(160, 160)
+
+[sub_resource type="StandardMaterial3D" id="Material_range"]
+albedo_color = Color(0.95, 0.76, 0.16, 1)
+emission_enabled = true
+emission = Color(0.45, 0.28, 0.02, 1)
+
+[sub_resource type="BoxMesh" id="Mesh_range"]
+material = SubResource("Material_range")
+size = Vector3(10, 0.02, 0.14)
+
+[sub_resource type="StandardMaterial3D" id="Material_disc"]
+albedo_color = Color(0.2, 0.72, 0.98, 1)
+metallic = 0.2
+roughness = 0.3
+emission_enabled = true
+emission = Color(0.035, 0.14, 0.22, 1)
+
+[sub_resource type="CylinderMesh" id="Mesh_disc"]
+material = SubResource("Material_disc")
+top_radius = 0.21
+bottom_radius = 0.21
+height = 0.035
+radial_segments = 32
+
+[sub_resource type="StandardMaterial3D" id="Material_cover"]
+transparency = 1
+shading_mode = 0
+albedo_color = Color(0.92, 0.16, 0.12, 0.78)
+emission_enabled = true
+emission = Color(0.38, 0.035, 0.02, 1)
+
+[sub_resource type="BoxMesh" id="Mesh_cover"]
+material = SubResource("Material_cover")
+size = Vector3(1.4, 5, 0.3)
+
+[node name="ArcadeFlightV2PlayerLab" type="Node3D"]
+script = ExtResource("1_script")
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
+rotation_degrees = Vector3(-54, -30, 0)
+light_energy = 1.5
+shadow_enabled = true
+
+[node name="GroundVisual" type="MeshInstance3D" parent="."]
+mesh = SubResource("Mesh_ground")
+
+[node name="Marker50ft" type="MeshInstance3D" parent="."]
+position = Vector3(0, 0.02, -15.24)
+mesh = SubResource("Mesh_range")
+
+[node name="Label" type="Label3D" parent="Marker50ft"]
+position = Vector3(-5.5, 0.4, 0)
+pixel_size = 0.008
+billboard = 1
+modulate = Color(1, 0.88, 0.31, 1)
+text = "50 ft"
+font_size = 36
+outline_size = 6
+
+[node name="Marker100ft" type="MeshInstance3D" parent="."]
+position = Vector3(0, 0.02, -30.48)
+mesh = SubResource("Mesh_range")
+
+[node name="Label" type="Label3D" parent="Marker100ft"]
+position = Vector3(-5.5, 0.4, 0)
+pixel_size = 0.008
+billboard = 1
+modulate = Color(1, 0.88, 0.31, 1)
+text = "100 ft"
+font_size = 36
+outline_size = 6
+
+[node name="Marker150ft" type="MeshInstance3D" parent="."]
+position = Vector3(0, 0.02, -45.72)
+mesh = SubResource("Mesh_range")
+
+[node name="Label" type="Label3D" parent="Marker150ft"]
+position = Vector3(-5.5, 0.4, 0)
+pixel_size = 0.008
+billboard = 1
+modulate = Color(1, 0.88, 0.31, 1)
+text = "150 ft"
+font_size = 36
+outline_size = 6
+
+[node name="Marker200ft" type="MeshInstance3D" parent="."]
+position = Vector3(0, 0.02, -60.96)
+mesh = SubResource("Mesh_range")
+
+[node name="Label" type="Label3D" parent="Marker200ft"]
+position = Vector3(-5.5, 0.4, 0)
+pixel_size = 0.008
+billboard = 1
+modulate = Color(1, 0.88, 0.31, 1)
+text = "200 ft"
+font_size = 36
+outline_size = 6
+
+[node name="FlexCoverVisual" type="MeshInstance3D" parent="."]
+position = Vector3(0, 2.5, -12)
+mesh = SubResource("Mesh_cover")
+
+[node name="Label" type="Label3D" parent="FlexCoverVisual"]
+position = Vector3(0, 2.85, 0)
+pixel_size = 0.005
+billboard = 1
+modulate = Color(1, 0.5, 0.38, 1)
+text = "V2 FLEX COVER\nvisual only — no collision"
+font_size = 30
+outline_size = 5
+horizontal_alignment = 1
+
+[node name="ReleasePoint" type="Marker3D" parent="."]
+position = Vector3(0, 2.5, 0)
+
+[node name="DiscVisual" type="MeshInstance3D" parent="."]
+visible = false
+mesh = SubResource("Mesh_disc")
+
+[node name="Player" parent="." instance=ExtResource("2_player")]
+
+[node name="UI" parent="." instance=ExtResource("3_hud")]
+
+[node name="V2Instructions" type="Label" parent="UI"]
+layout_mode = 1
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -500.0
+offset_top = 24.0
+offset_right = -24.0
+offset_bottom = 122.0
+grow_horizontal = 0
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 4
+theme_override_font_sizes/font_size = 18
+text = "FLIGHT V2 PLAYER LAB\n1 / 2 / 3: utility / neutral / understable\nQ / E: hyzer / anhyzer    RMB + LMB: aim, charge, throw\nThe reticle is the initial launch ray. Camera remains first-person. Red cover is visual-only."
+horizontal_alignment = 2
+
+[connection signal="pressed" from="UI/ControlsPanel/Controls/ThrowButton" to="." method="_on_throw_button_pressed"]
+[connection signal="pressed" from="UI/ControlsPanel/Controls/ResetButton" to="." method="_on_reset_button_pressed"]

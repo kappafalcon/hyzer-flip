@@ -1,0 +1,318 @@
+[gd_scene load_steps=25 format=3]
+
+[ext_resource type="Script" uid="uid://h5qrd6j3xhyr" path="res://scripts/flight/arcade/arcade_flight_prototype.gd" id="1_script"]
+
+[sub_resource type="Environment" id="Environment_lab"]
+background_mode = 1
+background_color = Color(0.025, 0.045, 0.075, 1)
+ambient_light_source = 3
+ambient_light_color = Color(0.44, 0.55, 0.72, 1)
+ambient_light_energy = 0.85
+
+[sub_resource type="StandardMaterial3D" id="Material_ground"]
+albedo_color = Color(0.055, 0.14, 0.095, 1)
+roughness = 0.92
+
+[sub_resource type="PlaneMesh" id="Mesh_ground"]
+material = SubResource("Material_ground")
+size = Vector2(44, 38)
+
+[sub_resource type="StandardMaterial3D" id="Material_centerline"]
+shading_mode = 0
+albedo_color = Color(0.2, 0.55, 0.42, 0.75)
+transparency = 1
+
+[sub_resource type="BoxMesh" id="Mesh_centerline"]
+material = SubResource("Material_centerline")
+size = Vector3(0.035, 0.012, 36)
+
+[sub_resource type="StandardMaterial3D" id="Material_range"]
+shading_mode = 0
+albedo_color = Color(0.82, 0.69, 0.25, 0.8)
+transparency = 1
+
+[sub_resource type="BoxMesh" id="Mesh_range"]
+material = SubResource("Material_range")
+size = Vector3(18, 0.014, 0.035)
+
+[sub_resource type="StandardMaterial3D" id="Material_flex_cover"]
+transparency = 1
+shading_mode = 0
+albedo_color = Color(0.92, 0.16, 0.12, 0.78)
+emission_enabled = true
+emission = Color(0.38, 0.035, 0.02, 1)
+
+[sub_resource type="BoxMesh" id="Mesh_flex_cover"]
+material = SubResource("Material_flex_cover")
+size = Vector3(1.4, 4, 0.3)
+
+[sub_resource type="StandardMaterial3D" id="Material_disc"]
+shading_mode = 0
+albedo_color = Color(0.2, 0.72, 0.98, 1)
+metallic = 0.18
+roughness = 0.3
+emission_enabled = true
+emission = Color(0.04, 0.16, 0.24, 1)
+
+[sub_resource type="CylinderMesh" id="Mesh_disc"]
+top_radius = 0.52
+bottom_radius = 0.52
+height = 0.07
+radial_segments = 48
+
+[sub_resource type="StandardMaterial3D" id="Material_stripe"]
+shading_mode = 0
+albedo_color = Color(0.98, 0.98, 0.9, 1)
+emission_enabled = true
+emission = Color(0.3, 0.3, 0.23, 1)
+
+[sub_resource type="BoxMesh" id="Mesh_stripe"]
+size = Vector3(0.08, 0.085, 0.55)
+
+[sub_resource type="ImmediateMesh" id="Mesh_powered_trail"]
+
+[sub_resource type="StandardMaterial3D" id="Material_powered_trail"]
+shading_mode = 0
+albedo_color = Color(0.1, 0.82, 1, 1)
+emission_enabled = true
+emission = Color(0.06, 0.5, 0.8, 1)
+
+[sub_resource type="ImmediateMesh" id="Mesh_late_trail"]
+
+[sub_resource type="StandardMaterial3D" id="Material_late_trail"]
+shading_mode = 0
+albedo_color = Color(1, 0.49, 0.12, 1)
+emission_enabled = true
+emission = Color(0.75, 0.2, 0.035, 1)
+
+[sub_resource type="StandardMaterial3D" id="Material_apex"]
+shading_mode = 0
+albedo_color = Color(1, 0.88, 0.2, 1)
+emission_enabled = true
+emission = Color(0.8, 0.52, 0.04, 1)
+
+[sub_resource type="SphereMesh" id="Mesh_apex"]
+material = SubResource("Material_apex")
+radius = 0.12
+height = 0.24
+
+[sub_resource type="StandardMaterial3D" id="Material_release"]
+shading_mode = 0
+albedo_color = Color(0.22, 0.92, 0.52, 1)
+emission_enabled = true
+emission = Color(0.05, 0.55, 0.22, 1)
+
+[sub_resource type="SphereMesh" id="Mesh_release"]
+material = SubResource("Material_release")
+radius = 0.08
+height = 0.16
+
+[node name="ArcadeFlightLabV2" type="Node3D"]
+script = ExtResource("1_script")
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("Environment_lab")
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
+rotation_degrees = Vector3(-52, -28, 0)
+light_color = Color(0.92, 0.95, 1, 1)
+light_energy = 1.55
+shadow_enabled = true
+
+[node name="GroundVisual" type="MeshInstance3D" parent="."]
+position = Vector3(0, 0, -18)
+mesh = SubResource("Mesh_ground")
+
+[node name="CenterLine" type="MeshInstance3D" parent="."]
+position = Vector3(0, 0.012, -18)
+mesh = SubResource("Mesh_centerline")
+
+[node name="Range10m" type="MeshInstance3D" parent="."]
+position = Vector3(0, 0.014, -10)
+mesh = SubResource("Mesh_range")
+
+[node name="Label" type="Label3D" parent="Range10m"]
+position = Vector3(-9.5, 0.3, 0)
+pixel_size = 0.007
+billboard = 1
+modulate = Color(1, 0.84, 0.3, 1)
+text = "10 m"
+font_size = 34
+outline_size = 5
+
+[node name="Range20m" type="MeshInstance3D" parent="."]
+position = Vector3(0, 0.014, -20)
+mesh = SubResource("Mesh_range")
+
+[node name="Label" type="Label3D" parent="Range20m"]
+position = Vector3(-9.5, 0.3, 0)
+pixel_size = 0.007
+billboard = 1
+modulate = Color(1, 0.84, 0.3, 1)
+text = "20 m"
+font_size = 34
+outline_size = 5
+
+[node name="Range30m" type="MeshInstance3D" parent="."]
+position = Vector3(0, 0.014, -30)
+mesh = SubResource("Mesh_range")
+
+[node name="Label" type="Label3D" parent="Range30m"]
+position = Vector3(-9.5, 0.3, 0)
+pixel_size = 0.007
+billboard = 1
+modulate = Color(1, 0.84, 0.3, 1)
+text = "30 m"
+font_size = 34
+outline_size = 5
+
+[node name="FlexCoverVisual" type="MeshInstance3D" parent="."]
+position = Vector3(0, 2, -12)
+mesh = SubResource("Mesh_flex_cover")
+
+[node name="Label" type="Label3D" parent="FlexCoverVisual"]
+position = Vector3(0, 2.35, 0)
+pixel_size = 0.01
+billboard = 1
+modulate = Color(1, 0.5, 0.38, 1)
+text = "FLEX COVER\nclear right, fade center"
+font_size = 30
+outline_size = 5
+horizontal_alignment = 1
+
+[node name="ReleasePoint" type="MeshInstance3D" parent="."]
+position = Vector3(0, 1.5, 0)
+mesh = SubResource("Mesh_release")
+
+[node name="DiscVisual" type="Node3D" parent="."]
+position = Vector3(0, 1.5, 0)
+
+[node name="DiscBody" type="MeshInstance3D" parent="DiscVisual"]
+material_override = SubResource("Material_disc")
+mesh = SubResource("Mesh_disc")
+
+[node name="NoseStripe" type="MeshInstance3D" parent="DiscVisual"]
+position = Vector3(0, 0, -0.26)
+material_override = SubResource("Material_stripe")
+mesh = SubResource("Mesh_stripe")
+
+[node name="BankEdgeMarker" type="MeshInstance3D" parent="DiscVisual"]
+position = Vector3(0.47, 0, 0)
+mesh = SubResource("Mesh_release")
+
+[node name="PoweredTrail" type="MeshInstance3D" parent="."]
+material_override = SubResource("Material_powered_trail")
+mesh = SubResource("Mesh_powered_trail")
+
+[node name="LateTrail" type="MeshInstance3D" parent="."]
+material_override = SubResource("Material_late_trail")
+mesh = SubResource("Mesh_late_trail")
+
+[node name="ApexMarker" type="MeshInstance3D" parent="."]
+visible = false
+mesh = SubResource("Mesh_apex")
+
+[node name="Label" type="Label3D" parent="ApexMarker"]
+position = Vector3(0, 0.35, 0)
+pixel_size = 0.0055
+billboard = 1
+modulate = Color(1, 0.9, 0.24, 1)
+text = "APEX\nfade enabled next tick"
+font_size = 30
+outline_size = 5
+horizontal_alignment = 1
+
+[node name="OverviewCamera" type="Camera3D" parent="."]
+position = Vector3(9, 22, 10)
+current = true
+fov = 50.0
+
+[node name="UI" type="CanvasLayer" parent="."]
+
+[node name="Panel" type="PanelContainer" parent="UI"]
+offset_left = 18.0
+offset_top = 18.0
+offset_right = 470.0
+offset_bottom = 420.0
+
+[node name="Margin" type="MarginContainer" parent="UI/Panel"]
+layout_mode = 2
+theme_override_constants/margin_left = 14
+theme_override_constants/margin_top = 12
+theme_override_constants/margin_right = 14
+theme_override_constants/margin_bottom = 12
+
+[node name="Content" type="VBoxContainer" parent="UI/Panel/Margin"]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="Title" type="Label" parent="UI/Panel/Margin/Content"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 22
+text = "Arcade Flight v2 — isolated prototype"
+
+[node name="Explanation" type="Label" parent="UI/Panel/Margin/Content"]
+custom_minimum_size = Vector2(420, 0)
+layout_mode = 2
+text = "Cyan = POWERED_FLIGHT (turn, no fade)   Orange = LATE_FLIGHT (fade)\nRed = visual flex cover (no collision). Utility anhyzer clears right, then returns.\nDisc visual is enlarged 5x so its bank is readable from the overview."
+autowrap_mode = 2
+
+[node name="DiscRow" type="HBoxContainer" parent="UI/Panel/Margin/Content"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="UI/Panel/Margin/Content/DiscRow"]
+custom_minimum_size = Vector2(90, 0)
+layout_mode = 2
+text = "Disc"
+
+[node name="DiscSelect" type="OptionButton" parent="UI/Panel/Margin/Content/DiscRow"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="ReleaseRow" type="HBoxContainer" parent="UI/Panel/Margin/Content"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="UI/Panel/Margin/Content/ReleaseRow"]
+custom_minimum_size = Vector2(90, 0)
+layout_mode = 2
+text = "Release"
+
+[node name="ReleaseSelect" type="OptionButton" parent="UI/Panel/Margin/Content/ReleaseRow"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="Buttons" type="HBoxContainer" parent="UI/Panel/Margin/Content"]
+layout_mode = 2
+theme_override_constants/separation = 6
+
+[node name="ThrowButton" type="Button" parent="UI/Panel/Margin/Content/Buttons"]
+layout_mode = 2
+text = "Throw / Replay"
+
+[node name="ResetButton" type="Button" parent="UI/Panel/Margin/Content/Buttons"]
+layout_mode = 2
+text = "Reset"
+
+[node name="VerifyButton" type="Button" parent="UI/Panel/Margin/Content/Buttons"]
+layout_mode = 2
+text = "Verify identical replay"
+
+[node name="ParameterLabel" type="Label" parent="UI/Panel/Margin/Content"]
+layout_mode = 2
+text = "turn_tendency —   turn_resistance —   fade —"
+
+[node name="StatusLabel" type="Label" parent="UI/Panel/Margin/Content"]
+custom_minimum_size = Vector2(420, 48)
+layout_mode = 2
+text = "Preparing fixed-step flight..."
+autowrap_mode = 2
+
+[node name="VerificationLabel" type="Label" parent="UI/Panel/Margin/Content"]
+custom_minimum_size = Vector2(420, 54)
+layout_mode = 2
+text = "Running deterministic matrix..."
+autowrap_mode = 2
+
+[connection signal="pressed" from="UI/Panel/Margin/Content/Buttons/ThrowButton" to="." method="_on_throw_pressed"]
+[connection signal="pressed" from="UI/Panel/Margin/Content/Buttons/ResetButton" to="." method="_on_reset_pressed"]
+[connection signal="pressed" from="UI/Panel/Margin/Content/Buttons/VerifyButton" to="." method="_on_verify_replay_pressed"]
